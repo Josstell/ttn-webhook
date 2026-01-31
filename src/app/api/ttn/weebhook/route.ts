@@ -1,12 +1,12 @@
 import prisma from "@/lib/db";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   // Seguridad (opcional pero recomendado)
-  const secret = req.headers.get("x-ttn-secret");
-  if (secret !== process.env.TTN_SECRET) {
-    return new Response("Unauthorized", { status: 401 });
-  }
+  // const secret = req.headers.get("x-ttn-secret");
+  // if (secret !== process.env.TTN_SECRET) {
+  //   return new Response("Unauthorized", { status: 401 });
+  // }
 
   const body = await req.json();
 
@@ -44,5 +44,5 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return Response.json({ ok: true });
+    return NextResponse.json({ success: true });
 }
