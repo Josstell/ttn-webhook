@@ -14,14 +14,23 @@ export async function POST(req: NextRequest) {
    * Storage Integration envía:
    * { result: { end_device_ids, uplink_message, received_at } }
    */
-  const result = body.result;
+
+  const result = body;
+
+  // console.log("DATA", body);
+
   if (!result?.uplink_message) {
-    return Response.json({ ok: true });
+    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
+
+  // console.log("RESULT", result);
 
   const { end_device_ids, uplink_message } = result;
 
-  console.log(uplink_message.decoded_payload);
+  // console.log("end_device_ids: ", end_device_ids);
+  // console.log("uplink_message: ", uplink_message);
+
+  // console.log(uplink_message.decoded_payload);
   await prisma.uplink.create({
     data: {
       application: end_device_ids.application_ids.application_id,
@@ -44,5 +53,5 @@ export async function POST(req: NextRequest) {
     },
   });
 
-    return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true });
 }
