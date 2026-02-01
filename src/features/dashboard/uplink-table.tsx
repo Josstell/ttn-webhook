@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";   
+import { useState } from "react";
 
 import {
   Table,
@@ -19,8 +19,6 @@ type Row = {
 };
 
 export function UplinkTable({ rows }: { rows: Row[] }) {
-
-  
   return (
     <div className="rounded-xl border">
       <Table>
@@ -34,22 +32,33 @@ export function UplinkTable({ rows }: { rows: Row[] }) {
         </TableHeader>
 
         <TableBody>
-          {rows.slice(-20).reverse().map((r, i) => (
-            <TableRow key={i}>
-              <TableCell>
-                {new Date(r.time).toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right">
-                {r.temperature.toFixed(1)}
-              </TableCell>
-              <TableCell className="text-right">
-                {r.humidity.toFixed(1)}
-              </TableCell>
-              <TableCell className="text-right">
-                {r.battery.toFixed(2)}
-              </TableCell>
-            </TableRow>
-          ))}
+          {rows
+            .slice(-20)
+            .reverse()
+            .map((r, i) => (
+              <TableRow key={i}>
+                <TableCell>
+                  {r.time.toLocaleString("es-MX", {
+                    timeZone: "America/Mexico_City",
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })}
+                </TableCell>
+                <TableCell className="text-right">
+                  {r.temperature.toFixed(1)}
+                </TableCell>
+                <TableCell className="text-right">
+                  {r.humidity.toFixed(1)}
+                </TableCell>
+                <TableCell className="text-right">
+                  {r.battery.toFixed(2)}
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </div>
