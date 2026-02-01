@@ -30,13 +30,20 @@ export const DashboardComponent = ({ initial }: Props) => {
   useEffect(() => {
     const channel = pusherClient.subscribe("uplinks");
     channel.bind("new", (uplink: any) => {
-      const values = [...data, uplink];
+      const dataRow = {
+        temperature: uplink.temperature,
+        humidity: uplink.humidity,
+        battery: uplink.battery,
+        time: uplink.receivedAt, // ❗ NO se usa en cálculos
+      };
+      const values = [...data, dataRow];
 
       setTemperature(calcStats(values, "temperature"));
       setHumidity(calcStats(values, "humidity"));
       setBattery(calcStats(values, "battery"));
-      setData((prev) => [...prev, uplink].slice(0, 50));
       setLastUpdate(new Date(uplink.receivedAt));
+
+      setData((prev) => [...prev, dataRow].slice(0, 50));
     });
 
     return () => {
