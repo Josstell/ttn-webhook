@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { pusher } from "@/lib/pusher-server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -30,8 +31,8 @@ export async function POST(req: NextRequest) {
   // console.log("end_device_ids: ", end_device_ids);
   // console.log("uplink_message: ", uplink_message);
 
-  // console.log(uplink_message.decoded_payload);
-  await prisma.uplink.create({
+ // console.log(uplink_message.decoded_payload);
+  const record = await prisma.uplink.create({
     data: {
       application: end_device_ids.application_ids.application_id,
       deviceId: end_device_ids.device_id,
@@ -52,6 +53,8 @@ export async function POST(req: NextRequest) {
       raw: body,
     },
   });
+
+  await pusher.trigger("uplinks", "new", record);
 
   return NextResponse.json({ success: true });
 }
