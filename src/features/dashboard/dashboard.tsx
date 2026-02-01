@@ -61,7 +61,16 @@ export const DashboardComponent = ({ initial }: Props) => {
       <h1 className="text-2xl font-bold">Sensor Ambiental</h1>
 
       <p className="text-sm text-muted-foreground">
-        Última actualización: {lastUpdate.toLocaleString()}
+        Última actualización:{" "}
+        {lastUpdate.toLocaleString("es-MX", {
+          timeZone: "America/Mexico_City",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })}
       </p>
 
       {/* Cards */}
