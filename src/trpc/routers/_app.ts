@@ -4,7 +4,6 @@ import { baseProcedure, createTRPCRouter, protectedProcedure } from "../init";
 import prisma from "@/lib/db";
 import { calcStats } from "@/lib/utils";
 
-
 export const appRouter = createTRPCRouter({
   getUsers: protectedProcedure.query(() => {
     return {
@@ -28,6 +27,7 @@ export const appRouter = createTRPCRouter({
         select: {
           temperature: true,
           humidity: true,
+          battery: true,
           receivedAt: true,
         },
       });

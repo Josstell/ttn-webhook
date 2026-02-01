@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   // console.log("end_device_ids: ", end_device_ids);
   // console.log("uplink_message: ", uplink_message);
 
- // console.log(uplink_message.decoded_payload);
+  // console.log(uplink_message.decoded_payload);
   const record = await prisma.uplink.create({
     data: {
       application: end_device_ids.application_ids.application_id,
@@ -53,6 +53,8 @@ export async function POST(req: NextRequest) {
       raw: body,
     },
   });
+
+  console.log("Record: ", record);
 
   await pusher.trigger("uplinks", "new", record);
 
