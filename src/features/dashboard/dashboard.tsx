@@ -35,7 +35,7 @@ export const DashboardComponent = ({ initial }: Props) => {
       setTemperature(calcStats(values, "temperature"));
       setHumidity(calcStats(values, "humidity"));
       setBattery(calcStats(values, "battery"));
-      setData((prev) => [uplink, ...prev].slice(0, 50));
+      setData((prev) => [...prev, uplink].slice(0, 50));
       setLastUpdate(new Date(uplink.receivedAt));
     });
 
