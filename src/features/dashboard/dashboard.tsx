@@ -34,14 +34,14 @@ export const DashboardComponent = ({ initial }: Props) => {
         temperature: uplink.temperature,
         humidity: uplink.humidity,
         battery: uplink.battery,
-        time: new Date(uplink.receivedAt), // ❗ NO se usa en cálculos
+        time: uplink.receivedAt, // ❗ NO se usa en cálculos
       };
       const values = [...data, dataRow];
 
       setTemperature(calcStats(values, "temperature"));
       setHumidity(calcStats(values, "humidity"));
       setBattery(calcStats(values, "battery"));
-      setLastUpdate(new Date(uplink.receivedAt));
+      setLastUpdate(uplink.receivedAt);
 
       setData((prev) => [...prev, dataRow].slice(0, 50));
     });
@@ -62,7 +62,7 @@ export const DashboardComponent = ({ initial }: Props) => {
 
       <p className="text-sm text-muted-foreground">
         Última actualización:{" "}
-        {lastUpdate.toLocaleString("es-MX", {
+        {new Date(lastUpdate).toLocaleString("es-MX", {
           timeZone: "America/Mexico_City",
           month: "short",
           day: "numeric",

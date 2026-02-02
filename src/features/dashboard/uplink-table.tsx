@@ -36,9 +36,9 @@ export function UplinkTable({ rows }: { rows: Row[] }) {
             .map((r, i) => (
               <TableRow key={i}>
                 <TableCell>
-                  {r.time.toLocaleString("es-MX", {
+                  {new Date(r.time).toLocaleString("es-MX", {
                     timeZone: "America/Mexico_City",
-                  })}
+                  })} 
                 </TableCell>
                 <TableCell className="text-right">
                   {r.temperature.toFixed(1)}
