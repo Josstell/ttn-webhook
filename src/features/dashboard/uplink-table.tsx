@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   Table,
   TableBody,
@@ -39,12 +38,6 @@ export function UplinkTable({ rows }: { rows: Row[] }) {
                 <TableCell>
                   {r.time.toLocaleString("es-MX", {
                     timeZone: "America/Mexico_City",
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
                   })}
                 </TableCell>
                 <TableCell className="text-right">
