@@ -38,7 +38,9 @@ export function UplinkTable({ rows }: { rows: Row[] }) {
                 <TableCell>
                   {new Date(r.time).toLocaleString("es-MX", {
                     timeZone: "America/Mexico_City",
-                  })} 
+                    dateStyle: "long",
+                    timeStyle: "medium",
+                  })}
                 </TableCell>
                 <TableCell className="text-right">
                   {r.temperature.toFixed(1)}

@@ -43,14 +43,14 @@ export const DashboardComponent = ({ initial }: Props) => {
       setBattery(calcStats(values, "battery"));
       setLastUpdate(uplink.receivedAt);
 
-      setData((prev) => [...prev, dataRow].slice(0, 50));
+      setData((prev) => [...prev, dataRow]);
     });
 
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, []);
+  }, [data]);
 
   //console.log("Last update: ", lastUpdate);
 
@@ -64,12 +64,8 @@ export const DashboardComponent = ({ initial }: Props) => {
         Última actualización:{" "}
         {new Date(lastUpdate).toLocaleString("es-MX", {
           timeZone: "America/Mexico_City",
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
+          dateStyle: "long",
+          timeStyle: "medium",
         })}
       </p>
 
