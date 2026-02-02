@@ -34,14 +34,14 @@ export const DashboardComponent = ({ initial }: Props) => {
         temperature: uplink.temperature,
         humidity: uplink.humidity,
         battery: uplink.battery,
-        time: uplink.receivedAt, // ❗ NO se usa en cálculos
+        time: new Date(uplink.receivedAt), // ❗ NO se usa en cálculos
       };
       const values = [...data, dataRow];
 
       setTemperature(calcStats(values, "temperature"));
       setHumidity(calcStats(values, "humidity"));
       setBattery(calcStats(values, "battery"));
-      setLastUpdate(uplink.receivedAt);
+      setLastUpdate(new Date(uplink.receivedAt));
 
       setData((prev) => [...prev, dataRow].slice(0, 50));
     });
