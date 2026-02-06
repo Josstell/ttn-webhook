@@ -121,7 +121,7 @@ export function DashboardComponent({ initial }: Props) {
               </CardHeader>
               <CardFooter>
                 <Badge variant="outline">
-                  <TrendingUpIcon />+{temperature.percentageRise.toFixed(1)}%
+                  <TrendingUpIcon />+{temperature?.percentageRise.toFixed(1)}%
                 </Badge>
               </CardFooter>
             </Card>
@@ -129,34 +129,34 @@ export function DashboardComponent({ initial }: Props) {
               <CardHeader>
                 <CardTitle>Temperatura Minima</CardTitle>
                 <CardDescription>
-                  {temperature.min.toFixed(2)} °C
+                  {temperature?.min.toFixed(2)} °C
                 </CardDescription>
               </CardHeader>
               <CardFooter>
                 <Badge variant="outline">
-                  <TrendingDownIcon />-{temperature.percentageRise.toFixed(1)}%
+                  <TrendingDownIcon />-{temperature.percentageDrop.toFixed(1)}%
                 </Badge>
               </CardFooter>
             </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Humedad Maxima</CardTitle>
-                <CardDescription>{humidity.max.toFixed(2)}%</CardDescription>
+                <CardDescription>{humidity?.max.toFixed(2)}%</CardDescription>
               </CardHeader>
               <CardFooter>
                 <Badge variant="outline">
-                  <TrendingUpIcon />+{humidity.percentageRise.toFixed(1)}%
+                  <TrendingUpIcon />+{humidity?.percentageRise.toFixed(1)}%
                 </Badge>
               </CardFooter>
             </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Humedad Minima</CardTitle>
-                <CardDescription>{humidity.min.toFixed(2)}%</CardDescription>
+                <CardDescription>{humidity?.min.toFixed(2)}%</CardDescription>
               </CardHeader>
               <CardFooter>
                 <Badge variant="outline">
-                  <TrendingDownIcon />-{humidity.percentageRise.toFixed(1)}%
+                  <TrendingDownIcon />-{humidity?.percentageDrop.toFixed(1)}%
                 </Badge>
               </CardFooter>
             </Card>

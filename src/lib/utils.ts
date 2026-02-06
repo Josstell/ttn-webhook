@@ -16,5 +16,7 @@ export function calcStats(values: any[], key: MetricKey) {
     max: nums.length ? Math.max(...nums) : 0,
     avg: nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0,
     current: raw.at(-1),
+    percentageRise: nums.length ? ((raw.at(-1) - Math.min(...nums)) / Math.min(...nums)) * 100 : 0,
+    percentageDrop: nums.length ? ((Math.max(...nums) - raw.at(-1)) / Math.max(...nums)) * 100 : 0,
   };
 }
