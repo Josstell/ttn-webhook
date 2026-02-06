@@ -1,4 +1,3 @@
-
 import { requireAuth } from "@/lib/auth-utils";
 import { caller } from "@/trpc/server";
 import { DashboardComponent } from "./components/dashboard-component";
@@ -8,12 +7,11 @@ import { DashboardComponent } from "./components/dashboard-component";
 //   description: "An example dashboard to test the new components.",
 // };
 
-
 // Load from database.
 
 export default async function DashboardPage() {
   await requireAuth();
-  const initial = await caller.stats({ hours: 24 });
+  const initial = await caller.stats({ hours: 48 });
 
   return (
     <div className="@container/page flex flex-1 flex-col gap-8 p-6">
