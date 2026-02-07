@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import {
   Card,
@@ -20,23 +20,20 @@ interface CleanUplink {
 
 import {
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
 
-export const description = "An interactive line chart";
-
 const chartConfig = {
-  views: {
-    label: "Page Views",
-  },
   temperature: {
-    label: "Temperatura",
+    label: "Temperatura (°C)",
     color: "var(--chart-1)",
   },
   humidity: {
-    label: "Humedad",
+    label: "Humedad (%)",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
@@ -46,16 +43,7 @@ export function ChartLineInteractive({
 }: {
   messages: CleanUplink[];
 }) {
-  const [activeChart, setActiveChart] =
-    React.useState<keyof typeof chartConfig>("temperature");
-
-  // const total = React.useMemo(
-  //   () => ({
-  //     temperature: messages.reduce((acc, curr) => acc + curr.temperature, 0),
-  //     mobile: messages.reduce((acc, curr) => acc + curr.mobile, 0),
-  //   }),
-  //   [],
-  // );
+  const [showBoth, setShowBoth] = React.useState(true);
 
   return (
     <Card className="py-4 sm:py-0">
@@ -63,35 +51,25 @@ export function ChartLineInteractive({
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 sm:pb-0">
           <CardTitle>Temperatura y Humedad</CardTitle>
           <CardDescription>
-            Mostrando la temperatura y humedad para el último día
+            Tendencia en tiempo real
           </CardDescription>
         </div>
-        <div className="flex">
-          {["temperature", "humidity"].map((key) => {
-            const chart = key as "temperature" | "humidity";
-            return (
-              <button
-                key={chart}
-                data-active={activeChart === chart}
-                className="data-[active=true]:bg-muted/50 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
-                onClick={() => setActiveChart(chart)}
-              >
-                <span className="text-muted-foreground text-[10px]">
-                  {chartConfig[chart].label}
-                </span>
-                <span className="text-lg leading-none font-bold sm:text-xl -ml-2">
-                  {messages[messages.length - 1]?.[chart] ?? 0}{" "}
-                  {chart === "temperature" ? "°C" : "%"}
-                </span>
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-4 px-6 py-3 sm:py-0">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showBoth}
+              onChange={(e) => setShowBoth(e.target.checked)}
+              className="rounded border-gray-300"
+            />
+            Mostrar ambas métricas
+          </label>
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
+          className="aspect-auto h-[300px] w-full"
         >
           <LineChart
             accessibilityLayer
@@ -101,7 +79,7 @@ export function ChartLineInteractive({
               right: 12,
             }}
           >
-            <CartesianGrid vertical={false} />
+            <CartesianGrid vertical={false} className="stroke-muted" />
             <XAxis
               dataKey="time"
               tickLine={false}
@@ -114,24 +92,22 @@ export function ChartLineInteractive({
                   timeZone: "America/Mexico_City",
                   month: "short",
                   day: "numeric",
-                  year: "numeric",
                   hour: "2-digit",
                   minute: "2-digit",
                   hour12: false,
                 });
               }}
             />
+            <YAxis yAxisId="temp" orientation="left" stroke="var(--chart-1)" tickFormatter={(v) => `${v}°C`} />
+            <YAxis yAxisId="humid" orientation="right" stroke="var(--chart-2)" tickFormatter={(v) => `${v}%`} />
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  className="w-[150px]"
-                  //nameKey="views"
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleString("es-MX", {
                       timeZone: "America/Mexico_City",
                       month: "short",
                       day: "numeric",
-                      year: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: false,
@@ -141,13 +117,29 @@ export function ChartLineInteractive({
                 />
               }
             />
-            <Line
-              dataKey={activeChart}
-              type="monotone"
-              stroke={`var(--color-${activeChart})`}
-              strokeWidth={2}
-              dot={false}
-            />
+            <ChartLegend content={<ChartLegendContent />} />
+            {(showBoth || true) && (
+              <>
+                <Line
+                  yAxisId="temp"
+                  dataKey="temperature"
+                  type="monotone"
+                  stroke="var(--color-temperature)"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4 }}
+                />
+                <Line
+                  yAxisId="humid"
+                  dataKey="humidity"
+                  type="monotone"
+                  stroke="var(--color-humidity)"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4 }}
+                />
+              </>
+            )}
           </LineChart>
         </ChartContainer>
       </CardContent>

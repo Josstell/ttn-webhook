@@ -2,8 +2,9 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import {
+  AlertTriangleIcon,
+  BatteryIcon,
   DownloadIcon,
-  FilterIcon,
   TrendingDownIcon,
   TrendingUpIcon,
 } from "lucide-react";
@@ -12,8 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -27,27 +28,98 @@ import { ChartLineInteractive } from "@/app/(panel)/dashboard/components/chart-l
 import { pusherClient } from "@/lib/pusher-client";
 import { calcStats } from "@/lib/utils";
 
+interface UplinkData {
+  temperature: number;
+  humidity: number;
+  battery: number;
+  receivedAt: string;
+}
+
+interface CleanUplink {
+  device: string;
+  temperature?: number;
+  humidity?: number;
+  battery?: number;
+  time: string;
+}
+
+interface Alert {
+  type: "error" | "warning";
+  message: string;
+}
+
+const TEMPERATURE_THRESHOLD = 35;
+const HUMIDITY_THRESHOLD = 80;
+const BATTERY_THRESHOLD = 3.3;
+
+interface MetricCardProps {
+  title: string;
+  value: number;
+  unit: string;
+  trend: number;
+  threshold?: number;
+  icon: React.ReactNode;
+}
+
+function MetricCard({ title, value, unit, trend, threshold, icon }: MetricCardProps) {
+  const isAlert = threshold ? value > threshold : false;
+  const trendColor = trend >= 0 ? "text-green-500" : "text-red-500";
+  const trendIcon = trend >= 0 ? <TrendingUpIcon className="h-4 w-4" /> : <TrendingDownIcon className="h-4 w-4" />;
+
+  return (
+    <Card className={isAlert ? "border-red-500/50" : ""}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">
+          {value.toFixed(1)}{unit}
+        </div>
+        <div className="flex items-center gap-2 mt-1">
+          <span className={`flex items-center text-xs ${trendColor}`}>
+            {trendIcon}
+            {Math.abs(trend).toFixed(1)}%
+          </span>
+          {threshold && (
+            <Badge variant={isAlert ? "destructive" : "secondary"} className="text-xs">
+              {isAlert ? (
+                <>
+                  <AlertTriangleIcon className="h-3 w-3 mr-1" />
+                  Above {threshold}
+                </>
+              ) : (
+                "Normal"
+              )}
+            </Badge>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 type Props = {
   initial: {
-    series: any[];
-    temperature: any;
-    humidity: any;
-    battery: any;
-    lastUpdate: any;
+    series: CleanUplink[];
+    temperature: { min: number; max: number; avg: number; current: number; percentageRise: number; percentageDrop: number };
+    humidity: { min: number; max: number; avg: number; current: number; percentageRise: number; percentageDrop: number };
+    battery: { min: number; max: number; avg: number; current: number; percentageRise: number; percentageDrop: number };
+    lastUpdate: string;
   };
 };
 
 export function DashboardComponent({ initial }: Props) {
-  const [data, setData] = useState(initial.series);
+  const [data, setData] = useState<CleanUplink[]>(initial.series);
   const [lastUpdate, setLastUpdate] = useState(initial.lastUpdate);
 
   useEffect(() => {
     const channel = pusherClient.subscribe("uplinks");
-    channel.bind("new", (uplink: any) => {
-      const dataRow = {
+    channel.bind("new", (uplink: UplinkData) => {
+      const dataRow: CleanUplink = {
+        device: "sensor-01",
         temperature: uplink.temperature,
         humidity: uplink.humidity,
-        battery: uplink.battery,
         time: uplink.receivedAt,
       };
       setData((prev) => [...prev, dataRow]);
@@ -62,6 +134,7 @@ export function DashboardComponent({ initial }: Props) {
 
   const temperature = useMemo(() => calcStats(data, "temperature"), [data]);
   const humidity = useMemo(() => calcStats(data, "humidity"), [data]);
+  const battery = useMemo(() => calcStats(data, "battery"), [data]);
 
   const formattedDate = useMemo(() => {
     return new Date(lastUpdate).toLocaleString("es-MX", {
@@ -71,11 +144,25 @@ export function DashboardComponent({ initial }: Props) {
     });
   }, [lastUpdate]);
 
+  const alerts = useMemo<Alert[]>(() => {
+    const result: Alert[] = [];
+    if (temperature.current > TEMPERATURE_THRESHOLD) {
+      result.push({ type: "error", message: `Temperature (${temperature.current.toFixed(1)}°C) exceeds threshold of ${TEMPERATURE_THRESHOLD}°C` });
+    }
+    if (humidity.current > HUMIDITY_THRESHOLD) {
+      result.push({ type: "warning", message: `Humidity (${humidity.current.toFixed(1)}%) exceeds threshold of ${HUMIDITY_THRESHOLD}%` });
+    }
+    if (battery.current < BATTERY_THRESHOLD) {
+      result.push({ type: "warning", message: `Battery (${battery.current.toFixed(2)}V) below optimal level` });
+    }
+    return result;
+  }, [temperature.current, humidity.current, battery.current]);
+
   const handleExport = () => {
     const headers = ["Temperature", "Humidity", "Battery", "Time"];
     const csvRows = [headers.join(",")];
 
-    data.forEach((row: any) => {
+    data.forEach((row) => {
       const values = [
         row.temperature ?? "",
         row.humidity ?? "",
@@ -99,6 +186,24 @@ export function DashboardComponent({ initial }: Props) {
 
   return (
     <div className="@container/page flex flex-1 flex-col gap-8 p-6">
+      {alerts.length > 0 && (
+        <div className="space-y-2">
+          {alerts.map((alert, index) => (
+            <div
+              key={index}
+              className={`flex items-center gap-2 rounded-lg border p-3 text-sm ${
+                alert.type === "error"
+                  ? "border-red-500/50 bg-red-50 text-red-700"
+                  : "border-yellow-500/50 bg-yellow-50 text-yellow-700"
+              }`}
+            >
+              <AlertTriangleIcon className="h-4 w-4" />
+              {alert.message}
+            </div>
+          ))}
+        </div>
+      )}
+
       <Tabs defaultValue="overview" className="gap-6">
         <div
           data-slot="dashboard-header"
@@ -118,10 +223,6 @@ export function DashboardComponent({ initial }: Props) {
             </p>
             <div className="hidden items-center gap-2 @3xl/page:flex">
               <AnalyticsDatePicker />
-              <Button variant="outline">
-                <FilterIcon />
-                Filter
-              </Button>
               <Button variant="outline" onClick={handleExport}>
                 <DownloadIcon />
                 Export
@@ -129,61 +230,128 @@ export function DashboardComponent({ initial }: Props) {
             </div>
           </div>
         </div>
+
         <TabsContent value="overview" className="flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <MetricCard
+              title="Temperatura"
+              value={temperature.current}
+              unit="°C"
+              trend={temperature.percentageRise}
+              threshold={TEMPERATURE_THRESHOLD}
+              icon={<TrendingUpIcon className="h-4 w-4 text-muted-foreground" />}
+            />
+            <MetricCard
+              title="Humedad"
+              value={humidity.current}
+              unit="%"
+              trend={humidity.percentageRise}
+              threshold={HUMIDITY_THRESHOLD}
+              icon={<TrendingUpIcon className="h-4 w-4 text-muted-foreground" />}
+            />
+            <MetricCard
+              title="Batería"
+              value={battery.current}
+              unit="V"
+              trend={battery.percentageDrop}
+              threshold={BATTERY_THRESHOLD}
+              icon={<BatteryIcon className="h-4 w-4 text-muted-foreground" />}
+            />
+            <MetricCard
+              title="Lecturas"
+              value={data.length}
+              unit=""
+              trend={0}
+              icon={<TrendingUpIcon className="h-4 w-4 text-muted-foreground" />}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <Card className="lg:col-span-2">
               <CardHeader>
-                <CardTitle>Temperatura Maxima</CardTitle>
+                <CardTitle>Tendencia Temporal</CardTitle>
                 <CardDescription>
-                  {temperature.max.toFixed(2)} °C
+                  Temperatura y humedad en tiempo real
                 </CardDescription>
               </CardHeader>
-              <CardFooter>
-                <Badge variant="outline">
-                  <TrendingUpIcon />+{temperature?.percentageRise.toFixed(1)}%
-                </Badge>
-              </CardFooter>
+              <CardContent>
+                <ChartLineInteractive messages={data} />
+              </CardContent>
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Temperatura Minima</CardTitle>
-                <CardDescription>
-                  {temperature?.min.toFixed(2)} °C
-                </CardDescription>
+                <CardTitle>Resumen Estadístico</CardTitle>
+                <CardDescription>Últimas 24 horas</CardDescription>
               </CardHeader>
-              <CardFooter>
-                <Badge variant="outline">
-                  <TrendingDownIcon />-{temperature.percentageDrop.toFixed(1)}%
-                </Badge>
-              </CardFooter>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Humedad Maxima</CardTitle>
-                <CardDescription>{humidity?.max.toFixed(2)}%</CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Badge variant="outline">
-                  <TrendingUpIcon />+{humidity?.percentageRise.toFixed(1)}%
-                </Badge>
-              </CardFooter>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Humedad Minima</CardTitle>
-                <CardDescription>{humidity?.min.toFixed(2)}%</CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Badge variant="outline">
-                  <TrendingDownIcon />-{humidity?.percentageDrop.toFixed(1)}%
-                </Badge>
-              </CardFooter>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Temperatura</div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="text-muted-foreground">Max:</div>
+                    <div className="font-medium">{temperature.max.toFixed(1)}°C</div>
+                    <div className="text-muted-foreground">Min:</div>
+                    <div className="font-medium">{temperature.min.toFixed(1)}°C</div>
+                    <div className="text-muted-foreground">Promedio:</div>
+                    <div className="font-medium">{temperature.avg.toFixed(1)}°C</div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Humedad</div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="text-muted-foreground">Max:</div>
+                    <div className="font-medium">{humidity.max.toFixed(1)}%</div>
+                    <div className="text-muted-foreground">Min:</div>
+                    <div className="font-medium">{humidity.min.toFixed(1)}%</div>
+                    <div className="text-muted-foreground">Promedio:</div>
+                    <div className="font-medium">{humidity.avg.toFixed(1)}%</div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Batería</div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="text-muted-foreground">Actual:</div>
+                    <div className="font-medium">{battery.current.toFixed(2)}V</div>
+                    <div className="text-muted-foreground">Mín:</div>
+                    <div className="font-medium">{battery.min.toFixed(2)}V</div>
+                  </div>
+                </div>
+              </CardContent>
             </Card>
           </div>
-          <div className="grid grid-cols-1">
-            <ChartLineInteractive messages={data} />
-          </div>
+
           <ProductsTable dataTempHum={data} />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="flex flex-col gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Análisis de Datos</CardTitle>
+              <CardDescription>
+                Vista detallada de métricas y tendencias
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Contenido de análisis detalladoComing soon...
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="reports" className="flex flex-col gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Reportes</CardTitle>
+              <CardDescription>
+                Generar y exportar reportes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Funcionalidad de reportesComing soon...
+              </p>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

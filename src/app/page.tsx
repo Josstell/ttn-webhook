@@ -1,6 +1,6 @@
-import { DashboardComponent } from "@/features/dashboard/dashboard";
 import { requireAuth } from "@/lib/auth-utils";
 import { caller } from "@/trpc/server";
+import { DashboardComponent } from "./(panel)/dashboard/components/dashboard-component";
 
 export default async function Page() {
   await requireAuth();
