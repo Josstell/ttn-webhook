@@ -27,6 +27,8 @@ import { ProductsTable } from "@/app/(panel)/dashboard/components/products-table
 import { ChartLineInteractive } from "@/app/(panel)/dashboard/components/chart-line-interactive";
 import { pusherClient } from "@/lib/pusher-client";
 import { calcStats } from "@/lib/utils";
+import { ChartLineMultiple } from "./chart-line-tooltip";
+import { da } from "date-fns/locale";
 
 interface UplinkData {
   temperature: number;
@@ -61,10 +63,22 @@ interface MetricCardProps {
   icon: React.ReactNode;
 }
 
-function MetricCard({ title, value, unit, trend, threshold, icon }: MetricCardProps) {
+function MetricCard({
+  title,
+  value,
+  unit,
+  trend,
+  threshold,
+  icon,
+}: MetricCardProps) {
   const isAlert = threshold ? value > threshold : false;
   const trendColor = trend >= 0 ? "text-green-500" : "text-red-500";
-  const trendIcon = trend >= 0 ? <TrendingUpIcon className="h-4 w-4" /> : <TrendingDownIcon className="h-4 w-4" />;
+  const trendIcon =
+    trend >= 0 ? (
+      <TrendingUpIcon className="h-4 w-4" />
+    ) : (
+      <TrendingDownIcon className="h-4 w-4" />
+    );
 
   return (
     <Card className={isAlert ? "border-red-500/50" : ""}>
@@ -74,7 +88,8 @@ function MetricCard({ title, value, unit, trend, threshold, icon }: MetricCardPr
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">
-          {value.toFixed(1)}{unit}
+          {value.toFixed(1)}
+          {unit}
         </div>
         <div className="flex items-center gap-2 mt-1">
           <span className={`flex items-center text-xs ${trendColor}`}>
@@ -82,7 +97,10 @@ function MetricCard({ title, value, unit, trend, threshold, icon }: MetricCardPr
             {Math.abs(trend).toFixed(1)}%
           </span>
           {threshold && (
-            <Badge variant={isAlert ? "destructive" : "secondary"} className="text-xs">
+            <Badge
+              variant={isAlert ? "destructive" : "secondary"}
+              className="text-xs"
+            >
               {isAlert ? (
                 <>
                   <AlertTriangleIcon className="h-3 w-3 mr-1" />
@@ -102,9 +120,30 @@ function MetricCard({ title, value, unit, trend, threshold, icon }: MetricCardPr
 type Props = {
   initial: {
     series: CleanUplink[];
-    temperature: { min: number; max: number; avg: number; current: number; percentageRise: number; percentageDrop: number };
-    humidity: { min: number; max: number; avg: number; current: number; percentageRise: number; percentageDrop: number };
-    battery: { min: number; max: number; avg: number; current: number; percentageRise: number; percentageDrop: number };
+    temperature: {
+      min: number;
+      max: number;
+      avg: number;
+      current: number;
+      percentageRise: number;
+      percentageDrop: number;
+    };
+    humidity: {
+      min: number;
+      max: number;
+      avg: number;
+      current: number;
+      percentageRise: number;
+      percentageDrop: number;
+    };
+    battery: {
+      min: number;
+      max: number;
+      avg: number;
+      current: number;
+      percentageRise: number;
+      percentageDrop: number;
+    };
     lastUpdate: string;
   };
 };
@@ -112,6 +151,7 @@ type Props = {
 export function DashboardComponent({ initial }: Props) {
   const [data, setData] = useState<CleanUplink[]>(initial.series);
   const [lastUpdate, setLastUpdate] = useState(initial.lastUpdate);
+  // const [daysToGet, setdaysToGet] = useState();
 
   useEffect(() => {
     const channel = pusherClient.subscribe("uplinks");
@@ -132,6 +172,10 @@ export function DashboardComponent({ initial }: Props) {
     };
   }, []);
 
+  // useEffect(() => {}, daysToGet);
+
+  // console.log("SET DAYS: ", daysToGet);
+
   const temperature = useMemo(() => calcStats(data, "temperature"), [data]);
   const humidity = useMemo(() => calcStats(data, "humidity"), [data]);
   const battery = useMemo(() => calcStats(data, "battery"), [data]);
@@ -147,13 +191,22 @@ export function DashboardComponent({ initial }: Props) {
   const alerts = useMemo<Alert[]>(() => {
     const result: Alert[] = [];
     if (temperature.current > TEMPERATURE_THRESHOLD) {
-      result.push({ type: "error", message: `Temperature (${temperature.current.toFixed(1)}°C) exceeds threshold of ${TEMPERATURE_THRESHOLD}°C` });
+      result.push({
+        type: "error",
+        message: `Temperature (${temperature.current.toFixed(1)}°C) exceeds threshold of ${TEMPERATURE_THRESHOLD}°C`,
+      });
     }
     if (humidity.current > HUMIDITY_THRESHOLD) {
-      result.push({ type: "warning", message: `Humidity (${humidity.current.toFixed(1)}%) exceeds threshold of ${HUMIDITY_THRESHOLD}%` });
+      result.push({
+        type: "warning",
+        message: `Humidity (${humidity.current.toFixed(1)}%) exceeds threshold of ${HUMIDITY_THRESHOLD}%`,
+      });
     }
     if (battery.current < BATTERY_THRESHOLD) {
-      result.push({ type: "warning", message: `Battery (${battery.current.toFixed(2)}V) below optimal level` });
+      result.push({
+        type: "warning",
+        message: `Battery (${battery.current.toFixed(2)}V) below optimal level`,
+      });
     }
     return result;
   }, [temperature.current, humidity.current, battery.current]);
@@ -239,7 +292,9 @@ export function DashboardComponent({ initial }: Props) {
               unit="°C"
               trend={temperature.percentageRise}
               threshold={TEMPERATURE_THRESHOLD}
-              icon={<TrendingUpIcon className="h-4 w-4 text-muted-foreground" />}
+              icon={
+                <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+              }
             />
             <MetricCard
               title="Humedad"
@@ -247,7 +302,9 @@ export function DashboardComponent({ initial }: Props) {
               unit="%"
               trend={humidity.percentageRise}
               threshold={HUMIDITY_THRESHOLD}
-              icon={<TrendingUpIcon className="h-4 w-4 text-muted-foreground" />}
+              icon={
+                <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+              }
             />
             <MetricCard
               title="Batería"
@@ -262,7 +319,9 @@ export function DashboardComponent({ initial }: Props) {
               value={data.length}
               unit=""
               trend={0}
-              icon={<TrendingUpIcon className="h-4 w-4 text-muted-foreground" />}
+              icon={
+                <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+              }
             />
           </div>
 
@@ -275,7 +334,12 @@ export function DashboardComponent({ initial }: Props) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ChartLineInteractive messages={data} />
+                {data && (
+                  <>
+                    <ChartLineMultiple messages={data} />
+                    {/* <ChartLineInteractive messages={data as any} /> */}
+                  </>
+                )}
               </CardContent>
             </Card>
             <Card>
@@ -288,29 +352,43 @@ export function DashboardComponent({ initial }: Props) {
                   <div className="text-sm font-medium">Temperatura</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-muted-foreground">Max:</div>
-                    <div className="font-medium">{temperature.max.toFixed(1)}°C</div>
+                    <div className="font-medium">
+                      {temperature.max.toFixed(1)}°C
+                    </div>
                     <div className="text-muted-foreground">Min:</div>
-                    <div className="font-medium">{temperature.min.toFixed(1)}°C</div>
+                    <div className="font-medium">
+                      {temperature.min.toFixed(1)}°C
+                    </div>
                     <div className="text-muted-foreground">Promedio:</div>
-                    <div className="font-medium">{temperature.avg.toFixed(1)}°C</div>
+                    <div className="font-medium">
+                      {temperature.avg.toFixed(1)}°C
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Humedad</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-muted-foreground">Max:</div>
-                    <div className="font-medium">{humidity.max.toFixed(1)}%</div>
+                    <div className="font-medium">
+                      {humidity.max.toFixed(1)}%
+                    </div>
                     <div className="text-muted-foreground">Min:</div>
-                    <div className="font-medium">{humidity.min.toFixed(1)}%</div>
+                    <div className="font-medium">
+                      {humidity.min.toFixed(1)}%
+                    </div>
                     <div className="text-muted-foreground">Promedio:</div>
-                    <div className="font-medium">{humidity.avg.toFixed(1)}%</div>
+                    <div className="font-medium">
+                      {humidity.avg.toFixed(1)}%
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Batería</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-muted-foreground">Actual:</div>
-                    <div className="font-medium">{battery.current.toFixed(2)}V</div>
+                    <div className="font-medium">
+                      {battery.current.toFixed(2)}V
+                    </div>
                     <div className="text-muted-foreground">Mín:</div>
                     <div className="font-medium">{battery.min.toFixed(2)}V</div>
                   </div>
@@ -342,9 +420,7 @@ export function DashboardComponent({ initial }: Props) {
           <Card>
             <CardHeader>
               <CardTitle>Reportes</CardTitle>
-              <CardDescription>
-                Generar y exportar reportes
-              </CardDescription>
+              <CardDescription>Generar y exportar reportes</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">

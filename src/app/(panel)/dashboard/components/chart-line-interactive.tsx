@@ -1,4 +1,17 @@
-"use client";
+interface StarDotProps {
+  cx?: number;
+  cy?: number;
+  payload?: Record<string, unknown>;
+}
+
+function StarDot({ cx, cy }: StarDotProps) {
+  if (cx == null || cy == null) return null;
+  return (
+    <svg x={cx - 6} y={cy - 6} width={12} height={12} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
+  );
+}
 
 import * as React from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
@@ -12,7 +25,7 @@ import {
 } from "@/components/ui/card";
 
 interface CleanUplink {
-  device: string;
+  battery?: number;
   temperature?: number;
   humidity?: number;
   time: string;
@@ -29,12 +42,12 @@ import {
 
 const chartConfig = {
   temperature: {
-    label: "Temperatura (°C)",
-    color: "var(--chart-1)",
+    label: "Temperatura (°C) *",
+    color: "#22c55e",
   },
   humidity: {
-    label: "Humedad (%)",
-    color: "var(--chart-2)",
+    label: "Humedad (%) *",
+    color: "#ef4444",
   },
 } satisfies ChartConfig;
 
@@ -45,14 +58,14 @@ export function ChartLineInteractive({
 }) {
   const [showBoth, setShowBoth] = React.useState(true);
 
+  console.log("Data:", messages);
+
   return (
     <Card className="py-4 sm:py-0">
       <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 sm:pb-0">
           <CardTitle>Temperatura y Humedad</CardTitle>
-          <CardDescription>
-            Tendencia en tiempo real
-          </CardDescription>
+          <CardDescription>Tendencia en tiempo real</CardDescription>
         </div>
         <div className="flex items-center gap-4 px-6 py-3 sm:py-0">
           <label className="flex items-center gap-2 text-sm cursor-pointer">
@@ -98,8 +111,18 @@ export function ChartLineInteractive({
                 });
               }}
             />
-            <YAxis yAxisId="temp" orientation="left" stroke="var(--chart-1)" tickFormatter={(v) => `${v}°C`} />
-            <YAxis yAxisId="humid" orientation="right" stroke="var(--chart-2)" tickFormatter={(v) => `${v}%`} />
+            <YAxis
+              yAxisId="temperature"
+              orientation="left"
+              stroke="#22c55e"
+              tickFormatter={(v) => `${v}°C`}
+            />
+            <YAxis
+              yAxisId="humidity"
+              orientation="right"
+              stroke="#ef4444"
+              tickFormatter={(v) => `${v}%`}
+            />
             <ChartTooltip
               content={
                 <ChartTooltipContent
@@ -114,29 +137,54 @@ export function ChartLineInteractive({
                     });
                   }}
                   indicator="dot"
+                  formatter={(value, name) => {
+                    const unit = name === "temperature" ? "°C" : "%";
+                    const label = name === "temperature" ? "Temperatura" : "Humedad";
+                    return [`${value}${unit}`, label];
+                  }}
                 />
               }
             />
             <ChartLegend content={<ChartLegendContent />} />
-            {(showBoth || true) && (
+            {showBoth && (
               <>
                 <Line
-                  yAxisId="temp"
+                  yAxisId="temperature"
                   dataKey="temperature"
                   type="monotone"
-                  stroke="var(--color-temperature)"
-                  strokeWidth={2}
+                  stroke="#22c55e"
+                  strokeWidth={4}
+                  strokeOpacity={0.3}
                   dot={false}
-                  activeDot={{ r: 4 }}
+                  activeDot={false}
                 />
                 <Line
-                  yAxisId="humid"
+                  yAxisId="temperature"
+                  dataKey="temperature"
+                  type="monotone"
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  dot={<StarDot />}
+                  activeDot={{ r: 6, strokeWidth: 2 }}
+                />
+                <Line
+                  yAxisId="humidity"
                   dataKey="humidity"
                   type="monotone"
-                  stroke="var(--color-humidity)"
-                  strokeWidth={2}
+                  stroke="#ef4444"
+                  strokeWidth={4}
+                  strokeOpacity={0.3}
                   dot={false}
-                  activeDot={{ r: 4 }}
+                  activeDot={false}
+                />
+                <Line
+                  yAxisId="humidity"
+                  dataKey="humidity"
+                  type="monotone"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  dot={<StarDot />}
+                  activeDot={{ r: 6, strokeWidth: 2 }}
                 />
               </>
             )}
