@@ -17,7 +17,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const description = "A multiple line chart";
 
@@ -49,7 +49,7 @@ interface CleanUplink {
 }
 
 export function ChartLineMultiple({ messages }: { messages: CleanUplink[] }) {
-  const [chartData, setchartData] = useState(messages);
+
 
   const formattedDateTo = useMemo(() => {
     return new Date(messages[0].time).toLocaleString("es-MX", {
@@ -82,7 +82,7 @@ export function ChartLineMultiple({ messages }: { messages: CleanUplink[] }) {
         <ChartContainer config={chartConfig}>
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={messages}
             margin={{
               left: 12,
               right: 12,
