@@ -1,6 +1,7 @@
 "use client";
 
 import { BadgeCheck, Bell, CreditCard, LogOut, Sparkles } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -13,21 +14,41 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut, getSession } from "better-auth/api";
 
 export function NavUser() {
-  const session = getSession();
+  const { data: session, isPending } = authClient.useSession();
 
-  console.log("session:", session);
+  if (isPending) {
+    return (
+      <Button variant="ghost" size="icon">
+        <Avatar className="size-8 rounded-md">
+          <AvatarFallback className="rounded-lg">...</AvatarFallback>
+        </Avatar>
+      </Button>
+    );
+  }
 
- 
+  if (!session) {
+    return null;
+  }
+
+  const user = session.user;
+  const initials = user.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : user.email?.slice(0, 2).toUpperCase();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <Avatar className="size-8 rounded-md">
-            <AvatarImage src={session.name} alt={session.name} />
-            <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+            <AvatarImage src={user.image ?? undefined} alt={user.name} />
+            <AvatarFallback className="rounded-lg">{initials ?? "CN"}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -40,13 +61,13 @@ export function NavUser() {
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={session.name} alt={session.name} />
-              <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+              <AvatarImage src={user.image ?? undefined} alt={user.name} />
+              <AvatarFallback className="rounded-lg">{initials ?? "CN"}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{session.name}</span>
+              <span className="truncate font-medium">{user.name}</span>
               <span className="text-muted-foreground truncate text-xs">
-                { }
+                {user.email}
               </span>
             </div>
           </div>
@@ -74,8 +95,8 @@ export function NavUser() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOut onClick={() => signOut()}/>
+        <DropdownMenuItem onClick={() => authClient.signOut()}>
+          <LogOut />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
