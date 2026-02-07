@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { MetricCard } from "@/features/dashboard/metric-card";
 import { SensorChart } from "@/features/dashboard/sensor-chart";
@@ -20,12 +20,7 @@ type Props = {
 
 export const DashboardComponent = ({ initial }: Props) => {
   const [data, setData] = useState(initial.series);
-
   const [lastUpdate, setLastUpdate] = useState(initial.lastUpdate);
-
-  const [temperature, setTemperature] = useState(initial.temperature);
-  const [humidity, setHumidity] = useState(initial.humidity);
-  const [battery, setBattery] = useState(initial.battery);
 
   useEffect(() => {
     const channel = pusherClient.subscribe("uplinks");
@@ -34,25 +29,29 @@ export const DashboardComponent = ({ initial }: Props) => {
         temperature: uplink.temperature,
         humidity: uplink.humidity,
         battery: uplink.battery,
-        time: uplink.receivedAt, // ❗ NO se usa en cálculos
+        time: uplink.receivedAt,
       };
-      const values = [...data, dataRow];
-
-      setTemperature(calcStats(values, "temperature"));
-      setHumidity(calcStats(values, "humidity"));
-      setBattery(calcStats(values, "battery"));
-      setLastUpdate(uplink.receivedAt);
-
       setData((prev) => [...prev, dataRow]);
+      setLastUpdate(uplink.receivedAt);
     });
 
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [data]);
+  }, []);
 
-  //console.log("Last update: ", lastUpdate);
+  const temperature = useMemo(() => calcStats(data, "temperature"), [data]);
+  const humidity = useMemo(() => calcStats(data, "humidity"), [data]);
+  const battery = useMemo(() => calcStats(data, "battery"), [data]);
+
+  const formattedDate = useMemo(() => {
+    return new Date(lastUpdate).toLocaleString("es-MX", {
+      timeZone: "America/Mexico_City",
+      dateStyle: "long",
+      timeStyle: "medium",
+    });
+  }, [lastUpdate]);
 
   if (!data) return null;
 
@@ -61,25 +60,17 @@ export const DashboardComponent = ({ initial }: Props) => {
       <h1 className="text-2xl font-bold">Sensor Ambiental</h1>
 
       <p className="text-sm text-muted-foreground">
-        Última actualización:{" "}
-        {new Date(lastUpdate).toLocaleString("es-MX", {
-          timeZone: "America/Mexico_City",
-          dateStyle: "long",
-          timeStyle: "medium",
-        })}
+        Última actualización: {formattedDate}
       </p>
 
-      {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <MetricCard title="Temperatura" unit="°C" stats={temperature} />
         <MetricCard title="Humedad" unit="%" stats={humidity} />
         <MetricCard title="Batería" unit="V" stats={battery} />
       </div>
 
-      {/* Chart */}
       <SensorChart data={data} />
 
-      {/* Table */}
       <section className="space-y-2">
         <h2 className="text-lg font-semibold">Lecturas recientes</h2>
         <UplinkTable rows={data} />
