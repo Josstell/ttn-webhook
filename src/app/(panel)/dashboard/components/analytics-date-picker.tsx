@@ -1,24 +1,34 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { addDays, format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import { type DateRange } from "react-day-picker"
+import * as React from "react";
+import { addDays, format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { type DateRange } from "react-day-picker";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn, getDateDifference } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
+
+// type Props = {
+//   setDays: ()=>void
+// }
 
 export function AnalyticsDatePicker() {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(new Date().getFullYear(), 0, 20),
     to: addDays(new Date(new Date().getFullYear(), 0, 20), 20),
-  })
+  });
+
+  // React.useEffect(() => {
+  //   setDays(getDateDifference(date).days)
+  // }, [date])
+  
+
 
   return (
     <Popover>
@@ -28,7 +38,7 @@ export function AnalyticsDatePicker() {
           variant="outline"
           className={cn(
             "w-fit justify-start px-2 font-normal",
-            !date && "text-muted-foreground"
+            !date && "text-muted-foreground",
           )}
         >
           <CalendarIcon className="text-muted-foreground" />
@@ -48,7 +58,6 @@ export function AnalyticsDatePicker() {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="end">
         <Calendar
-          initialFocus
           mode="range"
           defaultMonth={date?.from}
           selected={date}
@@ -57,5 +66,5 @@ export function AnalyticsDatePicker() {
         />
       </PopoverContent>
     </Popover>
-  )
+  );
 }

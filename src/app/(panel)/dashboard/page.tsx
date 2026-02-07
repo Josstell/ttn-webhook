@@ -11,7 +11,7 @@ import { DashboardComponent } from "./components/dashboard-component";
 
 export default async function DashboardPage() {
   await requireAuth();
-  const initial = await caller.stats({ hours: 48 });
+  const initial = await caller.stats({ hours: 5 * 24 });
 
   return (
     <div className="@container/page flex flex-1 flex-col gap-8 p-6">
