@@ -46,11 +46,11 @@ export const appRouter = createTRPCRouter({
         temperature: r.temperature,
         humidity: r.humidity,
         battery: r.battery,
-        time: r.receivedAt, // ❗ NO se usa en cálculos
+        time: r.receivedAt,
       }));
 
       return {
-        series: values, // incluye time para la gráfica
+        series: values,
         temperature: calcStats(values, "temperature"),
         humidity: calcStats(values, "humidity"),
         battery: calcStats(values, "battery"),
@@ -58,5 +58,4 @@ export const appRouter = createTRPCRouter({
       };
     }),
 });
-// export type definition of API
 export type AppRouter = typeof appRouter;

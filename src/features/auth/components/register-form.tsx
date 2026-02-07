@@ -61,7 +61,6 @@ export function RegisterForm() {
     },
   });
   const onSubmit = async (data: registerFormValues) => {
-    console.log("register data:", data);
     await authClient.signUp.email(
       {
         name: data.email,

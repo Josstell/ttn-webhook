@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   DownloadIcon,
   FilterIcon,
@@ -23,15 +23,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnalyticsDatePicker } from "@/app/(panel)/dashboard/components/analytics-date-picker";
 
 import { ProductsTable } from "@/app/(panel)/dashboard/components/products-table";
-// import { ChartAreaInteractive } from "./components/chart-area-interactive";
 import { ChartLineInteractive } from "@/app/(panel)/dashboard/components/chart-line-interactive";
 import { pusherClient } from "@/lib/pusher-client";
 import { calcStats } from "@/lib/utils";
-
-// export const metadata: Metadata = {
-//   title: "Dashboard",
-//   description: "An example dashboard to test the new components.",
-// };
 
 type Props = {
   initial: {
@@ -43,16 +37,9 @@ type Props = {
   };
 };
 
-// Load from database.
-
 export function DashboardComponent({ initial }: Props) {
   const [data, setData] = useState(initial.series);
-
   const [lastUpdate, setLastUpdate] = useState(initial.lastUpdate);
-
-  const [temperature, setTemperature] = useState(initial.temperature);
-  const [humidity, setHumidity] = useState(initial.humidity);
-  const [battery, setBattery] = useState(initial.battery);
 
   useEffect(() => {
     const channel = pusherClient.subscribe("uplinks");
@@ -61,25 +48,52 @@ export function DashboardComponent({ initial }: Props) {
         temperature: uplink.temperature,
         humidity: uplink.humidity,
         battery: uplink.battery,
-        time: uplink.receivedAt, // ❗ NO se usa en cálculos
+        time: uplink.receivedAt,
       };
-      const values = [...data, dataRow];
-
-      setTemperature(calcStats(values, "temperature"));
-      setHumidity(calcStats(values, "humidity"));
-      setBattery(calcStats(values, "battery"));
-      setLastUpdate(uplink.receivedAt);
-
       setData((prev) => [...prev, dataRow]);
+      setLastUpdate(uplink.receivedAt);
     });
 
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [data]);
+  }, []);
 
-  //console.log("Last update: ", lastUpdate);
+  const temperature = useMemo(() => calcStats(data, "temperature"), [data]);
+  const humidity = useMemo(() => calcStats(data, "humidity"), [data]);
+
+  const formattedDate = useMemo(() => {
+    return new Date(lastUpdate).toLocaleString("es-MX", {
+      timeZone: "America/Mexico_City",
+      dateStyle: "long",
+      timeStyle: "medium",
+    });
+  }, [lastUpdate]);
+
+  const handleExport = () => {
+    const headers = ["Temperature", "Humidity", "Battery", "Time"];
+    const csvRows = [headers.join(",")];
+
+    data.forEach((row: any) => {
+      const values = [
+        row.temperature ?? "",
+        row.humidity ?? "",
+        row.battery ?? "",
+        row.time ?? "",
+      ];
+      csvRows.push(values.join(","));
+    });
+
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `dashboard-data-${Date.now()}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   if (!data) return null;
 
@@ -88,7 +102,7 @@ export function DashboardComponent({ initial }: Props) {
       <Tabs defaultValue="overview" className="gap-6">
         <div
           data-slot="dashboard-header"
-          className="flex items-center justify-between"
+          className="flex flex-col gap-4 @3xl/page:flex-row @3xl/page:items-center @3xl/page:justify-between"
         >
           <TabsList className="w-full @3xl/page:w-fit">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -98,16 +112,21 @@ export function DashboardComponent({ initial }: Props) {
               Exports
             </TabsTrigger>
           </TabsList>
-          <div className="hidden items-center gap-2 @3xl/page:flex">
-            <AnalyticsDatePicker />
-            <Button variant="outline">
-              <FilterIcon />
-              Filter
-            </Button>
-            <Button variant="outline">
-              <DownloadIcon />
-              Export
-            </Button>
+          <div className="flex flex-col gap-2 @3xl/page:flex-row @3xl/page:items-center">
+            <p className="text-sm text-muted-foreground">
+              Última actualización: {formattedDate}
+            </p>
+            <div className="hidden items-center gap-2 @3xl/page:flex">
+              <AnalyticsDatePicker />
+              <Button variant="outline">
+                <FilterIcon />
+                Filter
+              </Button>
+              <Button variant="outline" onClick={handleExport}>
+                <DownloadIcon />
+                Export
+              </Button>
+            </div>
           </div>
         </div>
         <TabsContent value="overview" className="flex flex-col gap-4">

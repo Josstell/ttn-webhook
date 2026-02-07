@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { pusherClient } from "@/lib/pusher-client";
 import {
   Table,
@@ -28,6 +28,13 @@ export function RealtimeUplinkTable({ initial }: { initial: any[] }) {
     };
   }, []);
 
+  const formattedData = useMemo(() => {
+    return data.map(u => ({
+      ...u,
+      formattedTime: new Date(u.receivedAt).toLocaleTimeString()
+    }));
+  }, [data]);
+
   return (<Table>
       <TableHeader>
         <TableRow>
@@ -40,7 +47,7 @@ export function RealtimeUplinkTable({ initial }: { initial: any[] }) {
       </TableHeader>
 
       <TableBody>
-        {data.map(u => (
+        {formattedData.map(u => (
           <TableRow key={u.id}>
             <TableCell>{u.deviceId}</TableCell>
             <TableCell>
@@ -49,7 +56,7 @@ export function RealtimeUplinkTable({ initial }: { initial: any[] }) {
             <TableCell>{u.temperature}°</TableCell>
             <TableCell>{u.rssi}</TableCell>
             <TableCell>
-              {new Date(u.receivedAt).toLocaleTimeString()}
+              {u.formattedTime}
             </TableCell>
           </TableRow>
         ))}

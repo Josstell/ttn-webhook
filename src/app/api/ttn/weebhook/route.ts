@@ -3,35 +3,16 @@ import { pusher } from "@/lib/pusher-server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  // Seguridad (opcional pero recomendado)
-  // const secret = req.headers.get("x-ttn-secret");
-  // if (secret !== process.env.TTN_SECRET) {
-  //   return new Response("Unauthorized", { status: 401 });
-  // }
-
   const body = await req.json();
 
-  /**
-   * Storage Integration envía:
-   * { result: { end_device_ids, uplink_message, received_at } }
-   */
-
   const result = body;
-
-  // console.log("DATA", body);
 
   if (!result?.uplink_message) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 
-  // console.log("RESULT", result);
-
   const { end_device_ids, uplink_message } = result;
 
-  // console.log("end_device_ids: ", end_device_ids);
-  // console.log("uplink_message: ", uplink_message);
-
-  // console.log(uplink_message.decoded_payload);
   const record = await prisma.uplink.create({
     data: {
       application: end_device_ids.application_ids.application_id,
@@ -53,8 +34,6 @@ export async function POST(req: NextRequest) {
       raw: body,
     },
   });
-
-  console.log("Record: ", record);
 
   await pusher.trigger("uplinks", "new", record);
 
