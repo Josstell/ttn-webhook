@@ -86,7 +86,7 @@ export function SiteHeader() {
           </BreadcrumbList>
         </Breadcrumb>
         <div className="ml-auto flex items-center gap-2">
-          <SearchForm className="w-fullsm:w-auto" />
+          {/* <SearchForm className="w-fullsm:w-auto" /> */}
           {/* <ThemeSelector /> */}
           <ModeToggle />
           <NavUser

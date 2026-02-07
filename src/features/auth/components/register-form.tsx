@@ -91,7 +91,7 @@ export function RegisterForm() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid gap-6">
-                <div className="flex flex-col gap-4">
+                {/* <div className="flex flex-col gap-4">
                   <Button
                     variant="outline"
                     className="w-full"
@@ -120,7 +120,7 @@ export function RegisterForm() {
                     />
                     Continue with Google
                   </Button>
-                </div>
+                </div> */}
                 <div>
                   <FormField
                     control={form.control}

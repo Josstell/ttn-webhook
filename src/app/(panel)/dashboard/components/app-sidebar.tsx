@@ -29,31 +29,31 @@ const data = {
       url: "/dashboard/analytics",
       icon: ChartLineIcon,
     },
-    {
-      title: "Orders",
-      url: "/dashboard/orders",
-      icon: ShoppingBagIcon,
-    },
-    {
-      title: "Products",
-      url: "/dashboard/products",
-      icon: ShoppingCartIcon,
-    },
-    {
-      title: "Invoices",
-      url: "/dashboard/invoices",
-      icon: FileIcon,
-    },
-    {
-      title: "Customers",
-      url: "/dashboard/customers",
-      icon: UserIcon,
-    },
-    {
-      title: "Settings",
-      url: "/dashboard/settings",
-      icon: Settings2Icon,
-    },
+    // {
+    //   title: "Orders",
+    //   url: "/dashboard/orders",
+    //   icon: ShoppingBagIcon,
+    // },
+    // {
+    //   title: "Products",
+    //   url: "/dashboard/products",
+    //   icon: ShoppingCartIcon,
+    // },
+    // {
+    //   title: "Invoices",
+    //   url: "/dashboard/invoices",
+    //   icon: FileIcon,
+    // },
+    // {
+    //   title: "Customers",
+    //   url: "/dashboard/customers",
+    //   icon: UserIcon,
+    // },
+    // {
+    //   title: "Settings",
+    //   url: "/dashboard/settings",
+    //   icon: Settings2Icon,
+    // },
   ],
   navSecondary: [
     {
