@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Fragment, useMemo } from "react"
-import { usePathname } from "next/navigation"
-import { SidebarIcon } from "lucide-react"
+import { Fragment, useMemo } from "react";
+import { usePathname } from "next/navigation";
+import { SidebarIcon } from "lucide-react";
 
 // import { ThemeSelector } from "@/components/theme-selector"
-import { SearchForm } from "./search-form"
+import { SearchForm } from "./search-form";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,16 +13,16 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { useSidebar } from "@/components/ui/sidebar"
-import { ModeToggle } from "@/app/(panel)/dashboard/components/mode-toggle"
-import { NavUser } from "@/app/(panel)/dashboard/components/nav-user"
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useSidebar } from "@/components/ui/sidebar";
+import { ModeToggle } from "@/app/(panel)/dashboard/components/mode-toggle";
+import { NavUser } from "@/app/(panel)/dashboard/components/nav-user";
 
 export function SiteHeader() {
-  const { toggleSidebar } = useSidebar()
-  const pathname = usePathname()
+  const { toggleSidebar } = useSidebar();
+  const pathname = usePathname();
 
   // Faux breadcrumbs for demo.
   const breadcrumbs = useMemo(() => {
@@ -32,8 +32,8 @@ export function SiteHeader() {
       .map((path, index, array) => ({
         label: path,
         href: `/${array.slice(0, index + 1).join("/")}`,
-      }))
-  }, [pathname])
+      }));
+  }, [pathname]);
 
   return (
     <header
@@ -48,7 +48,7 @@ export function SiteHeader() {
           className="gap-2.5 has-[>svg]:px-2"
         >
           <SidebarIcon />
-          <span className="truncate font-medium">Acme Inc</span>
+          <span className="truncate font-medium">IOT System</span>
         </Button>
         <Separator
           orientation="vertical"
@@ -58,7 +58,7 @@ export function SiteHeader() {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/" className="capitalize">
-                Home
+                Inicio
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -81,7 +81,7 @@ export function SiteHeader() {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                 </Fragment>
-              )
+              ),
             )}
           </BreadcrumbList>
         </Breadcrumb>
@@ -89,11 +89,9 @@ export function SiteHeader() {
           {/* <SearchForm className="w-fullsm:w-auto" /> */}
           {/* <ThemeSelector /> */}
           {/* <ModeToggle /> */}
-          <NavUser
-           
-          />
+          <NavUser />
         </div>
       </div>
     </header>
-  )
+  );
 }

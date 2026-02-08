@@ -48,7 +48,9 @@ export function NavUser() {
         <Button variant="ghost" size="icon">
           <Avatar className="size-8 rounded-md">
             <AvatarImage src={user.image ?? undefined} alt={user.name} />
-            <AvatarFallback className="rounded-lg">{initials ?? "CN"}</AvatarFallback>
+            <AvatarFallback className="rounded-lg">
+              {initials ?? "CN"}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -62,7 +64,9 @@ export function NavUser() {
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="h-8 w-8 rounded-lg">
               <AvatarImage src={user.image ?? undefined} alt={user.name} />
-              <AvatarFallback className="rounded-lg">{initials ?? "CN"}</AvatarFallback>
+              <AvatarFallback className="rounded-lg">
+                {initials ?? "CN"}
+              </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
@@ -76,28 +80,28 @@ export function NavUser() {
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <Sparkles />
-            Upgrade to Pro
+            Actualizar a Pro
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <BadgeCheck />
-            Account
+            Cuenta
           </DropdownMenuItem>
           <DropdownMenuItem>
             <CreditCard />
-            Billing
+            Facturación
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Bell />
-            Notifications
+            Notificaciones
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => authClient.signOut()}>
           <LogOut />
-          Log out
+          Cerrar sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
