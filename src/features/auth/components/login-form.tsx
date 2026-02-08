@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -33,11 +32,11 @@ import { authClient } from "@/lib/auth-client";
 //import {authClient} from "@/lib/auth-client";
 
 const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
+  email: z.string().min(1, "El email es requerido").email("Email invalido"),
   password: z
     .string()
-    .min(1, "Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .min(1, "La contraseña es requerida")
+    .min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 type loginFormValues = z.infer<typeof loginSchema>;
 
@@ -60,11 +59,11 @@ export function LoginForm() {
       },
       {
         onSuccess: () => {
-          toast.success("Logged in successfully");
+          toast.success("Iniciaste sesión exitosamente");
           router.push("/");
         },
         onError: (ctx) => {
-          toast.error(`Login failed: ${ctx.error.message}`);
+          toast.error(`Login fallido: ${ctx.error.message}`);
         },
       },
     );
@@ -74,8 +73,8 @@ export function LoginForm() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle>Welcome Back</CardTitle>
-          <CardDescription>Login to continue</CardDescription>
+          <CardTitle>Bienvenido</CardTitle>
+          <CardDescription>Inicia sesión para continuar</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -153,13 +152,13 @@ export function LoginForm() {
                     className={cn("w-full mt-4", isPending && "opacity-70")}
                     disabled={isPending}
                   >
-                    {isPending ? "Logging in..." : "Login"}
+                    {isPending ? "Iniciando sesión..." : "Iniciar sesión"}
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Don't have an account?{" "}
+                  No tienes una cuenta?{" "}
                   <Link href="/signup" className="underline underline-offset-4">
-                    Sign Up
+                    Registrate
                   </Link>
                 </div>
               </div>

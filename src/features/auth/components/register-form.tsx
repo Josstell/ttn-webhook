@@ -35,16 +35,16 @@ const registerSchema = z
   .object({
     email: z
       .string()
-      .min(1, "Email is required")
-      .email("Invalid email address"),
+      .min(1, "El email es requerido")
+      .email("Email invalido"),
     password: z
       .string()
-      .min(1, "Password is required")
-      .min(6, "Password must be at least 6 characters"),
+      .min(1, "La contraseña es requerida")
+      .min(6, "La contraseña debe tener al menos 6 caracteres"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Las contraseñas no coinciden",
     path: ["confirmPassword"],
   });
 type registerFormValues = z.infer<typeof registerSchema>;
@@ -70,11 +70,11 @@ export function RegisterForm() {
       },
       {
         onSuccess: () => {
-          toast.success("Registered successfully!");
+          toast.success("Registrado exitosamente!");
           router.push("/");
         },
         onError: (ctx) => {
-          toast.error(`Registration failed: ${ctx.error.message}`);
+          toast.error(`Registro fallido: ${ctx.error.message}`);
         },
       },
     );
@@ -84,8 +84,8 @@ export function RegisterForm() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle>Get Started</CardTitle>
-          <CardDescription>Create your account to get started</CardDescription>
+          <CardTitle>Registrate</CardTitle>
+          <CardDescription>Crea tu cuenta para empezar</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -144,7 +144,7 @@ export function RegisterForm() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>Contraseña</FormLabel>
                         <FormControl>
                           <Input
                             type="password"
@@ -161,7 +161,7 @@ export function RegisterForm() {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel>Confirmar contraseña</FormLabel>
                         <FormControl>
                           <Input
                             type="password"
@@ -178,13 +178,13 @@ export function RegisterForm() {
                     className={cn("w-full mt-4", isPending && "opacity-70")}
                     disabled={isPending}
                   >
-                    {isPending ? "Registration..." : "Sign Up"}
+                    {isPending ? "Registrandose..." : "Registrarse"}
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Already have an account?{" "}
+                  Ya tienes una cuenta?{" "}
                   <Link href="/login" className="underline underline-offset-4">
-                    Login
+                    Inicia sesión
                   </Link>
                 </div>
               </div>
