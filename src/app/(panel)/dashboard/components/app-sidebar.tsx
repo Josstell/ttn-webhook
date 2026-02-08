@@ -1,28 +1,34 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ChartLineIcon,
   FileIcon,
   HomeIcon,
   LifeBuoy,
   Send,
+  LucideBellElectric,
   Settings2Icon,
   ShoppingBagIcon,
   ShoppingCartIcon,
   UserIcon,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Sidebar, SidebarContent } from "@/components/ui/sidebar"
-import { NavMain } from "@/app/(panel)/dashboard/components/nav-main"
-import { NavSecondary } from "@/app/(panel)/dashboard/components/nav-secondary"
+import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
+import { NavMain } from "@/app/(panel)/dashboard/components/nav-main";
+import { NavSecondary } from "@/app/(panel)/dashboard/components/nav-secondary";
 
 const data = {
   navMain: [
     {
-      title: "Dashboard",
+      title: "Humedad y Temperatura",
       url: "/dashboard",
       icon: HomeIcon,
+    },
+    {
+      title: "Conductividad",
+      url: "/dashboard/soil",
+      icon: LucideBellElectric,
     },
     {
       title: "Analytics",
@@ -67,7 +73,7 @@ const data = {
       icon: Send,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -80,5 +86,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
