@@ -33,10 +33,7 @@ import Image from "next/image";
 
 const registerSchema = z
   .object({
-    email: z
-      .string()
-      .min(1, "El email es requerido")
-      .email("Email invalido"),
+    email: z.string().min(1, "El email es requerido").email("Email invalido"),
     password: z
       .string()
       .min(1, "La contraseña es requerida")
@@ -131,7 +128,7 @@ export function RegisterForm() {
                         <FormControl>
                           <Input
                             type="email"
-                            placeholder="me@example.com"
+                            placeholder="Ingresa tu email"
                             {...field}
                           />
                         </FormControl>
@@ -148,7 +145,7 @@ export function RegisterForm() {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder="Enter your password"
+                            placeholder="Ingresa tu contraseña"
                             {...field}
                           />
                         </FormControl>
@@ -165,7 +162,7 @@ export function RegisterForm() {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder="Enter your password"
+                            placeholder="Confirma tu contraseña"
                             {...field}
                           />
                         </FormControl>

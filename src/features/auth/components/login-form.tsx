@@ -80,7 +80,6 @@ export function LoginForm() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid gap-6">
-
                 {/* <div className="flex flex-col gap-4">
                   <Button
                     variant="outline"
@@ -111,7 +110,7 @@ export function LoginForm() {
                     Continue with Google
                   </Button>
                 </div> */}
-                
+
                 <div>
                   <FormField
                     control={form.control}
@@ -122,7 +121,7 @@ export function LoginForm() {
                         <FormControl>
                           <Input
                             type="email"
-                            placeholder="me@example.com"
+                            placeholder="Ingresa tu email"
                             {...field}
                           />
                         </FormControl>
@@ -139,7 +138,7 @@ export function LoginForm() {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder="Enter your password"
+                            placeholder="Ingresa tu contraseña"
                             {...field}
                           />
                         </FormControl>
