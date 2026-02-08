@@ -394,19 +394,19 @@ export function DashboardSoil({ initialSoil }: Props) {
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-muted-foreground">Max:</div>
                     <div className="font-medium">
-                      {soilConductivity.max.toFixed(1)}°C
+                      {soilConductivity.max.toFixed(1)} S/m
                     </div>
                     <div className="text-muted-foreground">Min:</div>
                     <div className="font-medium">
-                      {soilConductivity.min.toFixed(1)}°C
+                      {soilConductivity.min.toFixed(1)} S/m
                     </div>
                     <div className="text-muted-foreground">Promedio:</div>
                     <div className="font-medium">
-                      {soilConductivity.avg.toFixed(1)}°C
+                      {soilConductivity.avg.toFixed(1)} S/m
                     </div>
                   </div>
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <div className="text-sm font-medium">Temperatura de aire</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-muted-foreground">Max:</div>
@@ -422,11 +422,9 @@ export function DashboardSoil({ initialSoil }: Props) {
                       {airTemperature.avg.toFixed(1)}°C
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">
-                    Temperatura de suelo
-                  </div>
+                  <div className="text-sm font-medium">Humedad del suelo</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-muted-foreground">Max:</div>
                     <div className="font-medium">
@@ -439,6 +437,25 @@ export function DashboardSoil({ initialSoil }: Props) {
                     <div className="text-muted-foreground">Promedio:</div>
                     <div className="font-medium">
                       {soilMoisture.avg.toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">
+                    Temperatura de suelo
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="text-muted-foreground">Max:</div>
+                    <div className="font-medium">
+                      {soilTemperature.max.toFixed(1)}°C
+                    </div>
+                    <div className="text-muted-foreground">Min:</div>
+                    <div className="font-medium">
+                      {soilTemperature.min.toFixed(1)}°C
+                    </div>
+                    <div className="text-muted-foreground">Promedio:</div>
+                    <div className="font-medium">
+                      {soilTemperature.avg.toFixed(1)}°C
                     </div>
                   </div>
                 </div>
