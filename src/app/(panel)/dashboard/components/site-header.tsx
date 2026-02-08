@@ -48,7 +48,7 @@ export function SiteHeader() {
           className="gap-2.5 has-[>svg]:px-2"
         >
           <SidebarIcon />
-          <span className="truncate font-medium">IOT System</span>
+          <span className="truncate font-medium">SistemaIOT </span>
         </Button>
         <Separator
           orientation="vertical"
