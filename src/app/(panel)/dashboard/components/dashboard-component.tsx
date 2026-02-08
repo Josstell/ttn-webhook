@@ -52,7 +52,7 @@ interface Alert {
 
 const TEMPERATURE_THRESHOLD = 35;
 const HUMIDITY_THRESHOLD = 80;
-const BATTERY_THRESHOLD = 4.2;
+const BATTERY_THRESHOLD = 4.1;
 
 interface MetricCardProps {
   title: string;
@@ -196,19 +196,19 @@ export function DashboardComponent({ initial }: Props) {
     if (temperature.current > TEMPERATURE_THRESHOLD) {
       result.push({
         type: "error",
-        message: `Temperature (${temperature.current.toFixed(1)}°C) exceeds threshold of ${TEMPERATURE_THRESHOLD}°C`,
+        message: `Temperatura del aire (${temperature.current.toFixed(1)}°C) excede el umbral de ${TEMPERATURE_THRESHOLD}°C`,
       });
     }
     if (humidity.current > HUMIDITY_THRESHOLD) {
       result.push({
         type: "warning",
-        message: `Humidity (${humidity.current.toFixed(1)}%) exceeds threshold of ${HUMIDITY_THRESHOLD}%`,
+        message: `Humedad del aire (${humidity.current.toFixed(1)}%) excede el umbral de ${HUMIDITY_THRESHOLD}%`,
       });
     }
     if (battery.current < BATTERY_THRESHOLD) {
       result.push({
         type: "warning",
-        message: `Battery (${battery.current.toFixed(2)}V) below optimal level`,
+        message: `Batería (${battery.current.toFixed(2)}V) por debajo del nivel óptimo`,
       });
     }
     return result;

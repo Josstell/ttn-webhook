@@ -56,7 +56,7 @@ const SOIL_CONDUCTIVITY_THRESHOLD = 100;
 const SOIL_TEMPERATURE_THRESHOLD = 35;
 const AIR_TEMPERATURE_THRESHOLD = 350;
 const SOIL_MOISTURE_THRESHOLD = 80;
-const BATTERY_THRESHOLD = 4.2;
+const BATTERY_THRESHOLD = 4.1;
 
 interface MetricCardProps {
   title: string;
@@ -186,31 +186,31 @@ export function DashboardSoil({ initialSoil }: Props) {
     if (soilTemperature.current > SOIL_TEMPERATURE_THRESHOLD) {
       result.push({
         type: "error",
-        message: `Temperature (${soilTemperature.current.toFixed(1)}°C) exceeds threshold of ${SOIL_TEMPERATURE_THRESHOLD}°C`,
+        message: `Temperatura del suelo (${soilTemperature.current.toFixed(1)}°C) excede el umbral de ${SOIL_TEMPERATURE_THRESHOLD}°C`,
       });
     }
     if (airTemperature.current > AIR_TEMPERATURE_THRESHOLD) {
       result.push({
         type: "error",
-        message: `Temperature (${airTemperature.current.toFixed(1)}°C) exceeds threshold of ${AIR_TEMPERATURE_THRESHOLD}°C`,
+        message: `Temperatura del aire (${airTemperature.current.toFixed(1)}°C) excede el umbral de ${AIR_TEMPERATURE_THRESHOLD}°C`,
       });
     }
     if (soilMoisture.current > SOIL_MOISTURE_THRESHOLD) {
       result.push({
         type: "warning",
-        message: `Humidity (${soilMoisture.current.toFixed(1)}%) exceeds threshold of ${SOIL_MOISTURE_THRESHOLD}%`,
+        message: `Humedad del suelo (${soilMoisture.current.toFixed(1)}%) excede el umbral de ${SOIL_MOISTURE_THRESHOLD}% `,
       });
     }
     if (battery.current < BATTERY_THRESHOLD) {
       result.push({
         type: "warning",
-        message: `Battery (${battery.current.toFixed(2)}V) below optimal level`,
+        message: `Batería (${battery.current.toFixed(2)}V) por debajo del nivel óptimo`,
       });
     }
     if (soilConductivity.current > SOIL_CONDUCTIVITY_THRESHOLD) {
       result.push({
         type: "warning",
-        message: `Conductivity (${soilConductivity.current.toFixed(2)}S/m) exceeds threshold of ${SOIL_CONDUCTIVITY_THRESHOLD}S/m`,
+        message: `Conductividad del suelo (${soilConductivity.current.toFixed(2)} S/m) excede el umbral de ${SOIL_CONDUCTIVITY_THRESHOLD} S/m`,
       });
     }
     return result;
@@ -283,11 +283,11 @@ export function DashboardSoil({ initialSoil }: Props) {
           className="flex flex-col gap-4 @3xl/page:flex-row @3xl/page:items-center @3xl/page:justify-between"
         >
           <TabsList className="w-full @3xl/page:w-fit">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
+            <TabsTrigger value="overview">Resumen</TabsTrigger>
+            <TabsTrigger value="analytics">Analíticas</TabsTrigger>
+            <TabsTrigger value="reports">Reportes</TabsTrigger>
             <TabsTrigger value="exports" disabled>
-              Exports
+              Exportar a archivo CSV
             </TabsTrigger>
           </TabsList>
           <div className="flex flex-col gap-2 @3xl/page:flex-row @3xl/page:items-center">
