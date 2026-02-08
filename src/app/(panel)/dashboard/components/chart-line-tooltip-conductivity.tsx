@@ -122,13 +122,13 @@ export function ChartLineConductivity({
               strokeWidth={2}
               dot={false}
             />
-            <Line
+            {/* <Line
               dataKey="airTemperature"
               type="monotone"
               stroke="var(--chart-3)"
               strokeWidth={2}
               dot={false}
-            />
+            /> */}
             <Line
               dataKey="soilTemperature"
               type="monotone"
