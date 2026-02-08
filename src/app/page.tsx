@@ -4,7 +4,7 @@ import { DashboardComponent } from "./(panel)/dashboard/components/dashboard-com
 
 export default async function Page() {
   await requireAuth();
-  const initial = await caller.stats({ hours: 24 });
+  const initial = await caller.stats({ hours: 8 * 24 });
 
   //console.log("initial: ", initial);
 

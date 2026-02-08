@@ -1,7 +1,14 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-type MetricKey = "temperature" | "humidity" | "battery";
+type MetricKey =
+  | "temperature"
+  | "humidity"
+  | "battery"
+  | "soilTemperature"
+  | "airTemperature"
+  | "soilMoisture"
+  | "conductivity";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -67,7 +74,8 @@ type DateDifference = {
 
 export function getDateDifference(
   date: unknown,
-  { from, to }: DateRange): DateDifference {
+  { from, to }: DateRange,
+): DateDifference {
   const start = new Date(from);
   const end = new Date(to);
 

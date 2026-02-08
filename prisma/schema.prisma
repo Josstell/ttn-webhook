@@ -99,3 +99,22 @@ model Uplink {
 
   raw Json
 }
+
+
+model SoilUplink {
+  id               String   @id @default(cuid())
+  deviceId         String
+  applicationId    String
+
+  battery          Float
+  conductivity     Float
+  soilTemperature  Float
+  airTemperature   Float
+  soilMoisture     Float
+
+  receivedAt       DateTime 
+
+  raw              Json
+
+  createdAt        DateTime @default(now())
+}

@@ -28,7 +28,9 @@ import { ChartLineInteractive } from "@/app/(panel)/dashboard/components/chart-l
 import { pusherClient } from "@/lib/pusher-client";
 import { calcStats } from "@/lib/utils";
 import { ChartLineMultiple } from "./chart-line-tooltip";
-import { da } from "date-fns/locale";
+import { SoilSeriesItem, SoilStatsResponse } from "../../../../../types";
+import { TableSoil } from "./table-soil";
+import { ChartLineConductivity } from "./chart-line-tooltip-conductivity";
 
 interface UplinkData {
   temperature: number;
@@ -50,8 +52,10 @@ interface Alert {
   message: string;
 }
 
-const TEMPERATURE_THRESHOLD = 35;
-const HUMIDITY_THRESHOLD = 80;
+const SOIL_CONDUCTIVITY_THRESHOLD = 100;
+const SOIL_TEMPERATURE_THRESHOLD = 35;
+const AIR_TEMPERATURE_THRESHOLD = 35;
+const SOIL_MOISTURE_THRESHOLD = 80;
 const BATTERY_THRESHOLD = 3.3;
 
 interface MetricCardProps {
@@ -118,52 +122,29 @@ function MetricCard({
 }
 
 type Props = {
-  initial: {
-    series: CleanUplink[];
-    temperature: {
-      min: number;
-      max: number;
-      avg: number;
-      current: number;
-      percentageRise: number;
-      percentageDrop: number;
-    };
-    humidity: {
-      min: number;
-      max: number;
-      avg: number;
-      current: number;
-      percentageRise: number;
-      percentageDrop: number;
-    };
-    battery: {
-      min: number;
-      max: number;
-      avg: number;
-      current: number;
-      percentageRise: number;
-      percentageDrop: number;
-    };
-    lastUpdate: string;
-  };
+  initialSoil: SoilStatsResponse;
 };
 
-export function DashboardComponent({ initial }: Props) {
-  const [data, setData] = useState<CleanUplink[]>(initial.series);
-  const [lastUpdate, setLastUpdate] = useState(initial.lastUpdate ?? new Date().toISOString());
+export function DashboardSoil({ initialSoil }: Props) {
+  const [data, setData] = useState<SoilSeriesItem[]>(initialSoil.series);
+  const [lastUpdate, setLastUpdate] = useState(
+    initialSoil.lastUpdate ?? new Date().toISOString(),
+  );
   // const [daysToGet, setdaysToGet] = useState();
 
   useEffect(() => {
-    const channel = pusherClient.subscribe("uplinks");
-    channel.bind("new", (uplink: UplinkData) => {
-      const dataRow: CleanUplink = {
-        device: "sensor-01",
-        temperature: uplink.temperature,
-        humidity: uplink.humidity,
-        time: uplink.receivedAt,
+    const channel = pusherClient.subscribe("soil-uplinks");
+    channel.bind("new", (soilUplink: SoilSeriesItem) => {
+      const dataRow: SoilSeriesItem = {
+        battery: soilUplink.battery,
+        conductivity: soilUplink.conductivity,
+        soilTemperature: soilUplink.soilTemperature,
+        airTemperature: soilUplink.airTemperature,
+        soilMoisture: soilUplink.soilMoisture,
+        time: soilUplink.time,
       };
       setData((prev) => [...prev, dataRow]);
-      setLastUpdate(uplink.receivedAt);
+      setLastUpdate(soilUplink.time);
     });
 
     return () => {
@@ -176,8 +157,19 @@ export function DashboardComponent({ initial }: Props) {
 
   // console.log("SET DAYS: ", daysToGet);
 
-  const temperature = useMemo(() => calcStats(data, "temperature"), [data]);
-  const humidity = useMemo(() => calcStats(data, "humidity"), [data]);
+  const soilConductivity = useMemo(
+    () => calcStats(data, "conductivity"),
+    [data],
+  );
+  const soilTemperature = useMemo(
+    () => calcStats(data, "soilTemperature"),
+    [data],
+  );
+  const airTemperature = useMemo(
+    () => calcStats(data, "airTemperature"),
+    [data],
+  );
+  const soilMoisture = useMemo(() => calcStats(data, "soilMoisture"), [data]);
   const battery = useMemo(() => calcStats(data, "battery"), [data]);
 
   const formattedDate = useMemo(() => {
@@ -191,16 +183,22 @@ export function DashboardComponent({ initial }: Props) {
 
   const alerts = useMemo<Alert[]>(() => {
     const result: Alert[] = [];
-    if (temperature.current > TEMPERATURE_THRESHOLD) {
+    if (soilTemperature.current > SOIL_TEMPERATURE_THRESHOLD) {
       result.push({
         type: "error",
-        message: `Temperature (${temperature.current.toFixed(1)}°C) exceeds threshold of ${TEMPERATURE_THRESHOLD}°C`,
+        message: `Temperature (${soilTemperature.current.toFixed(1)}°C) exceeds threshold of ${SOIL_TEMPERATURE_THRESHOLD}°C`,
       });
     }
-    if (humidity.current > HUMIDITY_THRESHOLD) {
+    if (airTemperature.current > AIR_TEMPERATURE_THRESHOLD) {
+      result.push({
+        type: "error",
+        message: `Temperature (${airTemperature.current.toFixed(1)}°C) exceeds threshold of ${AIR_TEMPERATURE_THRESHOLD}°C`,
+      });
+    }
+    if (soilMoisture.current > SOIL_MOISTURE_THRESHOLD) {
       result.push({
         type: "warning",
-        message: `Humidity (${humidity.current.toFixed(1)}%) exceeds threshold of ${HUMIDITY_THRESHOLD}%`,
+        message: `Humidity (${soilMoisture.current.toFixed(1)}%) exceeds threshold of ${SOIL_MOISTURE_THRESHOLD}%`,
       });
     }
     if (battery.current < BATTERY_THRESHOLD) {
@@ -209,17 +207,38 @@ export function DashboardComponent({ initial }: Props) {
         message: `Battery (${battery.current.toFixed(2)}V) below optimal level`,
       });
     }
+    if (soilConductivity.current > SOIL_CONDUCTIVITY_THRESHOLD) {
+      result.push({
+        type: "warning",
+        message: `Conductivity (${soilConductivity.current.toFixed(2)}S/m) exceeds threshold of ${SOIL_CONDUCTIVITY_THRESHOLD}S/m`,
+      });
+    }
     return result;
-  }, [temperature.current, humidity.current, battery.current]);
+  }, [
+    soilTemperature.current,
+    airTemperature.current,
+    soilMoisture.current,
+    battery.current,
+    soilConductivity.current,
+  ]);
 
   const handleExport = () => {
-    const headers = ["Temperature", "Humidity", "Battery", "Time"];
+    const headers = [
+      "Conductivity",
+      "Soil Temperature",
+      "Air Temperature",
+      "Soil Moisture",
+      "Battery",
+      "Time",
+    ];
     const csvRows = [headers.join(",")];
 
     data.forEach((row) => {
       const values = [
-        row.temperature ?? "",
-        row.humidity ?? "",
+        row.conductivity ?? "",
+        row.soilTemperature ?? "",
+        row.airTemperature ?? "",
+        row.soilMoisture ?? "",
         row.battery ?? "",
         row.time ?? "",
       ];
@@ -231,7 +250,7 @@ export function DashboardComponent({ initial }: Props) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `dashboard-data-${Date.now()}.csv`;
+    link.download = `dashboard-soil-data-${Date.now()}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -288,25 +307,45 @@ export function DashboardComponent({ initial }: Props) {
         <TabsContent value="overview" className="flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <MetricCard
-              title="Temperatura"
-              value={temperature.current}
-              unit="°C"
-              trend={temperature.percentageRise}
-              threshold={TEMPERATURE_THRESHOLD}
+              title="Conductividad"
+              value={soilConductivity.current}
+              unit="S/m"
+              trend={soilConductivity.percentageRise}
+              threshold={SOIL_CONDUCTIVITY_THRESHOLD}
               icon={
                 <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
               }
             />
             <MetricCard
               title="Humedad"
-              value={humidity.current}
+              value={soilMoisture.current}
               unit="%"
-              trend={humidity.percentageRise}
-              threshold={HUMIDITY_THRESHOLD}
+              trend={soilMoisture.percentageRise}
+              threshold={SOIL_MOISTURE_THRESHOLD}
               icon={
                 <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
               }
             />
+            <MetricCard
+              title="soilTemperature"
+              value={soilTemperature.current}
+              unit="%"
+              trend={soilTemperature.percentageRise}
+              threshold={SOIL_MOISTURE_THRESHOLD}
+              icon={
+                <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+              }
+            />
+            {/* <MetricCard
+              title="Air Temperature"
+              value={airTemperature.current}
+              unit="°C"
+              trend={airTemperature.percentageRise}
+              threshold={AIR_TEMPERATURE_THRESHOLD}
+              icon={
+                <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+              }
+            /> */}
             <MetricCard
               title="Batería"
               value={battery.current}
@@ -331,14 +370,15 @@ export function DashboardComponent({ initial }: Props) {
               <CardHeader>
                 <CardTitle>Tendencia Temporal</CardTitle>
                 <CardDescription>
-                  Temperatura y humedad en tiempo real
+                  Conductividad, humedad del suelo, temperatura aire y suelo en
+                  tiempo real
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {data && (
                   <>
-                    <ChartLineMultiple messages={data} />
-                    {/* <ChartLineInteractive messages={data as any} /> */}
+                    {" "}
+                    <ChartLineConductivity messages={data as any} />{" "}
                   </>
                 )}
               </CardContent>
@@ -350,39 +390,59 @@ export function DashboardComponent({ initial }: Props) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">Temperatura</div>
+                  <div className="text-sm font-medium">Conductividad</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-muted-foreground">Max:</div>
                     <div className="font-medium">
-                      {temperature.max.toFixed(1)}°C
+                      {soilConductivity.max.toFixed(1)}°C
                     </div>
                     <div className="text-muted-foreground">Min:</div>
                     <div className="font-medium">
-                      {temperature.min.toFixed(1)}°C
+                      {soilConductivity.min.toFixed(1)}°C
                     </div>
                     <div className="text-muted-foreground">Promedio:</div>
                     <div className="font-medium">
-                      {temperature.avg.toFixed(1)}°C
+                      {soilConductivity.avg.toFixed(1)}°C
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">Humedad</div>
+                  <div className="text-sm font-medium">Temperatura de aire</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-muted-foreground">Max:</div>
                     <div className="font-medium">
-                      {humidity.max.toFixed(1)}%
+                      {airTemperature.max.toFixed(1)}°C
                     </div>
                     <div className="text-muted-foreground">Min:</div>
                     <div className="font-medium">
-                      {humidity.min.toFixed(1)}%
+                      {airTemperature.min.toFixed(1)}°C
                     </div>
                     <div className="text-muted-foreground">Promedio:</div>
                     <div className="font-medium">
-                      {humidity.avg.toFixed(1)}%
+                      {airTemperature.avg.toFixed(1)}°C
                     </div>
                   </div>
                 </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">
+                    Temperatura de suelo
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="text-muted-foreground">Max:</div>
+                    <div className="font-medium">
+                      {soilMoisture.max.toFixed(1)}%
+                    </div>
+                    <div className="text-muted-foreground">Min:</div>
+                    <div className="font-medium">
+                      {soilMoisture.min.toFixed(1)}%
+                    </div>
+                    <div className="text-muted-foreground">Promedio:</div>
+                    <div className="font-medium">
+                      {soilMoisture.avg.toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Batería</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
@@ -398,7 +458,7 @@ export function DashboardComponent({ initial }: Props) {
             </Card>
           </div>
 
-          <ProductsTable dataTempHum={data} />
+          <TableSoil dataSoil={data} />
         </TabsContent>
 
         <TabsContent value="analytics" className="flex flex-col gap-4">

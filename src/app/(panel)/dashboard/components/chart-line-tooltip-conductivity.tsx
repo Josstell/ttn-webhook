@@ -18,6 +18,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { useEffect, useMemo, useState } from "react";
+import { SoilSeriesItem } from "../../../../../types";
 
 export const description = "A multiple line chart";
 
@@ -41,16 +42,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface CleanUplink {
-  battery?: number;
-  temperature?: number;
-  humidity?: number;
-  time: string;
-}
-
-export function ChartLineMultiple({ messages }: { messages: CleanUplink[] }) {
-
-
+export function ChartLineConductivity({
+  messages,
+}: {
+  messages: SoilSeriesItem[];
+}) {
   const formattedDateTo = useMemo(() => {
     if (!messages || messages.length === 0) return "";
     return new Date(messages[0].time).toLocaleString("es-MX", {
@@ -75,7 +71,7 @@ export function ChartLineMultiple({ messages }: { messages: CleanUplink[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Grafica de temperatura y humedad</CardTitle>
+        {/* <CardTitle>Grafica de conductividad, humedad del suelo, temperatura aire y temperatura del suelo</CardTitle> */}
         <CardDescription>
           {formattedDateTo && formattedDateLast
             ? `De ${formattedDateTo} a ${formattedDateLast}`
@@ -113,16 +109,30 @@ export function ChartLineMultiple({ messages }: { messages: CleanUplink[] }) {
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Line
-              dataKey="humidity"
+              dataKey="conductivity"
               type="monotone"
-              stroke="var(--color-mobile)"
+              stroke="var(--chart-1)"
               strokeWidth={2}
               dot={false}
             />
             <Line
-              dataKey="temperature"
+              dataKey="soilMoisture"
               type="monotone"
-              stroke="var(--color-desktop)"
+              stroke="var(--chart-2)"
+              strokeWidth={2}
+              dot={false}
+            />
+            <Line
+              dataKey="airTemperature"
+              type="monotone"
+              stroke="var(--chart-3)"
+              strokeWidth={2}
+              dot={false}
+            />
+            <Line
+              dataKey="soilTemperature"
+              type="monotone"
+              stroke="var(--chart-4)"
               strokeWidth={2}
               dot={false}
             />
