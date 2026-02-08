@@ -309,7 +309,7 @@ export function DashboardSoil({ initialSoil }: Props) {
             <MetricCard
               title="Conductividad"
               value={soilConductivity.current}
-              unit="S/m"
+              unit=" S/m"
               trend={soilConductivity.percentageRise}
               threshold={SOIL_CONDUCTIVITY_THRESHOLD}
               icon={
@@ -317,7 +317,7 @@ export function DashboardSoil({ initialSoil }: Props) {
               }
             />
             <MetricCard
-              title="Humedad"
+              title="Humedad del suelo"
               value={soilMoisture.current}
               unit="%"
               trend={soilMoisture.percentageRise}
@@ -327,9 +327,9 @@ export function DashboardSoil({ initialSoil }: Props) {
               }
             />
             <MetricCard
-              title="soilTemperature"
+              title="Temperatura del suelo"
               value={soilTemperature.current}
-              unit="%"
+              unit="°C"
               trend={soilTemperature.percentageRise}
               threshold={SOIL_MOISTURE_THRESHOLD}
               icon={
