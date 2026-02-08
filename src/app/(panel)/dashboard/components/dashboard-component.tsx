@@ -52,7 +52,7 @@ interface Alert {
 
 const TEMPERATURE_THRESHOLD = 35;
 const HUMIDITY_THRESHOLD = 80;
-const BATTERY_THRESHOLD = 3.3;
+const BATTERY_THRESHOLD = 4.2;
 
 interface MetricCardProps {
   title: string;
@@ -150,7 +150,9 @@ type Props = {
 
 export function DashboardComponent({ initial }: Props) {
   const [data, setData] = useState<CleanUplink[]>(initial.series);
-  const [lastUpdate, setLastUpdate] = useState(initial.lastUpdate ?? new Date().toISOString());
+  const [lastUpdate, setLastUpdate] = useState(
+    initial.lastUpdate ?? new Date().toISOString(),
+  );
   // const [daysToGet, setdaysToGet] = useState();
 
   useEffect(() => {
