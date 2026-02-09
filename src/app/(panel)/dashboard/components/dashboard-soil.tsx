@@ -143,8 +143,10 @@ export function DashboardSoil({ initialSoil }: Props) {
         soilMoisture: soilUplink.soilMoisture,
         time: soilUplink.receivedAt,
       };
+
+      const values =[...data, dataRow]
       setData((prev) => [...prev, dataRow]);
-      setLastUpdate(soilUplink.receivedAt);
+      setLastUpdate(data.at(-1)?.time);
     });
 
     return () => {
