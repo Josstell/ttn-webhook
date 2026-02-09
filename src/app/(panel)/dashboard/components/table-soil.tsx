@@ -1,3 +1,4 @@
+"use client";
 // import { EllipsisVerticalIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
