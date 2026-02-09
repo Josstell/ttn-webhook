@@ -127,7 +127,7 @@ type Props = {
 
 export function DashboardSoil({ initialSoil }: Props) {
   const [data, setData] = useState<SoilSeriesItem[]>(initialSoil.series);
-  const [lastUpdate, setLastUpdate] = useState(
+  const [lastUpdate, setLastUpdate] = useState<Date | undefined>(
     initialSoil.lastUpdate ?? new Date().toISOString(),
   );
   // const [daysToGet, setdaysToGet] = useState();
@@ -141,10 +141,10 @@ export function DashboardSoil({ initialSoil }: Props) {
         soilTemperature: soilUplink.soilTemperature,
         airTemperature: soilUplink.airTemperature,
         soilMoisture: soilUplink.soilMoisture,
-        time: soilUplink.time,
+        time: soilUplink.receivedAt,
       };
       setData((prev) => [...prev, dataRow]);
-      setLastUpdate(soilUplink.time);
+      setLastUpdate(soilUplink.receivedAt);
     });
 
     return () => {

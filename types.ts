@@ -5,14 +5,14 @@ export type MetricStats = {
   current: number;
 };
 
-
 export type SoilSeriesItem = {
   soilTemperature: number;
   airTemperature: number;
   soilMoisture: number;
   conductivity: number;
   battery: number;
-  time: Date;
+  time?: Date;
+  receivedAt?: Date;
 };
 
 export type SoilStatsResponse = {
