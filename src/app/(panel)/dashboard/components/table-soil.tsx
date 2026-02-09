@@ -65,15 +65,17 @@ export function TableSoil({ dataSoil }: { dataSoil: SoilSeriesItem[] }) {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {new Date(data.time).toLocaleString("es-MX", {
-                      timeZone: "America/Mexico_City",
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    })}
+                    {data.time
+                      ? new Date(data.time).toLocaleString("es-MX", {
+                          timeZone: "America/Mexico_City",
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: false,
+                        })
+                      : "N/A"}
                   </TableCell>
                   {/* <TableCell>
                     <DropdownMenu>

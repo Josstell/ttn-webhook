@@ -31,12 +31,15 @@ export async function POST(req: NextRequest) {
 
   await pusher.trigger("soil-uplinks", "new", {
     deviceId: body.end_device_ids.device_id,
+
     battery: payload.BatV,
     conductivity: payload.conduct_SOIL1,
     soilTemperature: Number(payload.temp_SOIL1),
     airTemperature: Number(payload.temp_DS18B20),
     soilMoisture: Number(payload.water_SOIL1),
+
     receivedAt: new Date(body.received_at),
+    time: new Date(body.received_at),
   });
 
   return NextResponse.json({ ok: true });

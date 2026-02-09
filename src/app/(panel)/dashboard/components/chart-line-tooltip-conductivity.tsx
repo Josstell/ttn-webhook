@@ -49,7 +49,9 @@ export function ChartLineConductivity({
 }) {
   const formattedDateTo = useMemo(() => {
     if (!messages || messages.length === 0) return "";
-    return new Date(messages[0].time).toLocaleString("es-MX", {
+    const firstMessage = messages[0];
+    if (!firstMessage.time) return "";
+    return new Date(firstMessage.time).toLocaleString("es-MX", {
       timeZone: "America/Mexico_City",
       dateStyle: "long",
       timeStyle: "medium",
@@ -58,14 +60,13 @@ export function ChartLineConductivity({
 
   const formattedDateLast = useMemo(() => {
     if (!messages || messages.length === 0) return "";
-    return new Date(messages[messages.length - 1].time).toLocaleString(
-      "es-MX",
-      {
-        timeZone: "America/Mexico_City",
-        dateStyle: "long",
-        timeStyle: "medium",
-      },
-    );
+    const lastMessage = messages[messages.length - 1];
+    if (!lastMessage.time) return "";
+    return new Date(lastMessage.time).toLocaleString("es-MX", {
+      timeZone: "America/Mexico_City",
+      dateStyle: "long",
+      timeStyle: "medium",
+    });
   }, [messages]);
 
   return (

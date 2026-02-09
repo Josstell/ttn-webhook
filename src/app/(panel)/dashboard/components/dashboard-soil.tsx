@@ -141,12 +141,12 @@ export function DashboardSoil({ initialSoil }: Props) {
         soilTemperature: soilUplink.soilTemperature,
         airTemperature: soilUplink.airTemperature,
         soilMoisture: soilUplink.soilMoisture,
-        time: soilUplink.receivedAt,
+        time: soilUplink.time,
       };
 
       const values =[...data, dataRow]
       setData((prev) => [...prev, dataRow]);
-      setLastUpdate(data.at(-1)?.time);
+      setLastUpdate(soilUplink.time);
     });
 
     return () => {
