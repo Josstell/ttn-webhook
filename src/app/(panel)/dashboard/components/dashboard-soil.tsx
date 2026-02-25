@@ -145,7 +145,7 @@ export function DashboardSoil({ initialSoil }: Props) {
         time: soilUplink.time,
       };
 
-      const values =[...data, dataRow]
+      const values = [...data, dataRow]
       setData((prev) => [...prev, dataRow]);
       setLastUpdate(soilUplink.time);
     });
@@ -267,11 +267,10 @@ export function DashboardSoil({ initialSoil }: Props) {
           {alerts.map((alert, index) => (
             <div
               key={index}
-              className={`flex items-center gap-2 rounded-lg border p-3 text-sm ${
-                alert.type === "error"
-                  ? "border-red-500/50 bg-red-50 text-red-700"
-                  : "border-yellow-500/50 bg-yellow-50 text-yellow-700"
-              }`}
+              className={`flex items-center gap-2 rounded-lg border p-3 text-sm ${alert.type === "error"
+                ? "border-red-500/50 bg-red-50 text-red-700"
+                : "border-yellow-500/50 bg-yellow-50 text-yellow-700"
+                }`}
             >
               <AlertTriangleIcon className="h-4 w-4" />
               {alert.message}
@@ -290,7 +289,7 @@ export function DashboardSoil({ initialSoil }: Props) {
             <TabsTrigger value="analytics">Analíticas</TabsTrigger>
             <TabsTrigger value="reports">Reportes</TabsTrigger>
             <TabsTrigger value="exports">
-              Exportar a archivo CSV
+              Exportar a CSV
             </TabsTrigger>
           </TabsList>
           <div className="flex flex-col gap-2 @3xl/page:flex-row @3xl/page:items-center">
