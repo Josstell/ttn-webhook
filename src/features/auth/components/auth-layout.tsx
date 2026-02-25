@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-type Props = {};
+type Props = object;
 
 export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (

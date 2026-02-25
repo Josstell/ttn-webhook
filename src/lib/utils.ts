@@ -10,10 +10,15 @@ type MetricKey =
   | "soilMoisture"
   | "conductivity";
 
+type MetricValue = number | undefined;
+
+type DataPoint = Partial<Record<MetricKey, MetricValue>> & Record<string, MetricValue>;
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function calcStats(values: any[], key: MetricKey) {
   if (values.length === 0) {
     return {

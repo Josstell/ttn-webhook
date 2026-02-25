@@ -10,7 +10,14 @@ import {
   Legend,
 } from "recharts";
 
-export function SensorChart({ data }: { data: any[] }) {
+type SensorDataPoint = {
+  time: string | Date;
+  temperature: number;
+  humidity: number;
+  battery: number;
+};
+
+export function SensorChart({ data }: { data: SensorDataPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={350}>
       <LineChart data={data}>

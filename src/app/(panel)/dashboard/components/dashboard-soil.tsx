@@ -56,7 +56,8 @@ const SOIL_CONDUCTIVITY_THRESHOLD = 100;
 const SOIL_TEMPERATURE_THRESHOLD = 35;
 const AIR_TEMPERATURE_THRESHOLD = 350;
 const SOIL_MOISTURE_THRESHOLD = 80;
-const BATTERY_THRESHOLD = 4.1;
+const BATTERY_THRESHOLD = 4.0;
+const BATTERY_DISPLAY_THRESHOLD = 4.3;
 
 interface MetricCardProps {
   title: string;
@@ -288,7 +289,7 @@ export function DashboardSoil({ initialSoil }: Props) {
             <TabsTrigger value="overview">Resumen</TabsTrigger>
             <TabsTrigger value="analytics">Analíticas</TabsTrigger>
             <TabsTrigger value="reports">Reportes</TabsTrigger>
-            <TabsTrigger value="exports" disabled>
+            <TabsTrigger value="exports">
               Exportar a archivo CSV
             </TabsTrigger>
           </TabsList>
@@ -298,10 +299,6 @@ export function DashboardSoil({ initialSoil }: Props) {
             </p>
             <div className="hidden items-center gap-2 @3xl/page:flex">
               <AnalyticsDatePicker />
-              <Button variant="outline" onClick={handleExport}>
-                <DownloadIcon />
-                Export
-              </Button>
             </div>
           </div>
         </div>
@@ -353,7 +350,7 @@ export function DashboardSoil({ initialSoil }: Props) {
               value={battery.current}
               unit="V"
               trend={battery.percentageDrop}
-              threshold={BATTERY_THRESHOLD}
+              threshold={BATTERY_DISPLAY_THRESHOLD}
               icon={<BatteryIcon className="h-4 w-4 text-muted-foreground" />}
             />
             <MetricCard
@@ -380,6 +377,7 @@ export function DashboardSoil({ initialSoil }: Props) {
                 {data && (
                   <>
                     {" "}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     <ChartLineConductivity messages={data as any} />{" "}
                   </>
                 )}

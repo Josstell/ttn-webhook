@@ -2,9 +2,9 @@ import { RegisterForm } from "@/features/auth/components/register-form";
 import { requireUnauth } from "@/lib/auth-utils";
 import React from "react";
 
-type Props = {};
+type Props = object;
 
-const registerPage = async (props: Props) => {
+const registerPage = async () => {
   await requireUnauth();
 
   return <RegisterForm />;

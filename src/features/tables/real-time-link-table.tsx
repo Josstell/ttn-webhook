@@ -12,13 +12,28 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
-export function RealtimeUplinkTable({ initial }: { initial: any[] }) {
+type UplinkData = {
+  id?: string;
+  deviceId?: string;
+  temperature?: number;
+  humidity?: number;
+  battery?: number;
+  soilMoisture?: number;
+  conductivity?: number;
+  soilTemperature?: number;
+  airTemperature?: number;
+  rssi?: number;
+  time?: Date;
+  receivedAt?: Date;
+};
+
+export function RealtimeUplinkTable({ initial }: { initial: UplinkData[] }) {
   const [data, setData] = useState(initial);
 
   useEffect(() => {
     const channel = pusherClient.subscribe("uplinks");
 
-    channel.bind("new", (uplink: any) => {
+    channel.bind("new", (uplink: UplinkData) => {
       setData(prev => [uplink, ...prev].slice(0, 50));
     });
 
@@ -31,7 +46,7 @@ export function RealtimeUplinkTable({ initial }: { initial: any[] }) {
   const formattedData = useMemo(() => {
     return data.map(u => ({
       ...u,
-      formattedTime: new Date(u.receivedAt).toLocaleTimeString()
+      formattedTime: u.receivedAt ? new Date(u.receivedAt).toLocaleTimeString() : ""
     }));
   }, [data]);
 

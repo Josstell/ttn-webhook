@@ -52,7 +52,8 @@ interface Alert {
 
 const TEMPERATURE_THRESHOLD = 35;
 const HUMIDITY_THRESHOLD = 80;
-const BATTERY_THRESHOLD = 4.1;
+const BATTERY_THRESHOLD = 4.0;
+const BATTERY_DISPLAY_THRESHOLD = 4.3;
 
 interface MetricCardProps {
   title: string;
@@ -269,7 +270,7 @@ export function DashboardComponent({ initial }: Props) {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
-            <TabsTrigger value="exports" disabled>
+            <TabsTrigger value="exports">
               Exports
             </TabsTrigger>
           </TabsList>
@@ -279,10 +280,6 @@ export function DashboardComponent({ initial }: Props) {
             </p>
             <div className="hidden items-center gap-2 @3xl/page:flex">
               <AnalyticsDatePicker />
-              <Button variant="outline" onClick={handleExport}>
-                <DownloadIcon />
-                Export
-              </Button>
             </div>
           </div>
         </div>
@@ -314,7 +311,7 @@ export function DashboardComponent({ initial }: Props) {
               value={battery.current}
               unit="V"
               trend={battery.percentageDrop}
-              threshold={BATTERY_THRESHOLD}
+              threshold={BATTERY_DISPLAY_THRESHOLD}
               icon={<BatteryIcon className="h-4 w-4 text-muted-foreground" />}
             />
             <MetricCard

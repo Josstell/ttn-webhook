@@ -29,7 +29,6 @@ export function TableSoil({ dataSoil }: { dataSoil: SoilSeriesItem[] }) {
             <TableRow>
               <TableHead>Conductividad</TableHead>
               <TableHead>Humedad del suelo</TableHead>
-              <TableHead>Temperatura aire</TableHead>
               <TableHead>Temperatura suelo</TableHead>
 
               <TableHead>Fecha y hora</TableHead>
@@ -43,17 +42,6 @@ export function TableSoil({ dataSoil }: { dataSoil: SoilSeriesItem[] }) {
                 <TableRow key={index}>
                   <TableCell>{data.conductivity?.toFixed(1)}S/m</TableCell>
                   <TableCell>{data.soilMoisture?.toFixed(1)}%</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        data.airTemperature && data.airTemperature > 35
-                          ? "destructive"
-                          : "secondary"
-                      }
-                    >
-                      {data.airTemperature?.toFixed(1) ?? "N/A"}°C
-                    </Badge>
-                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={

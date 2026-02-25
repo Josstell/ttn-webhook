@@ -15,6 +15,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="@container/page flex flex-1 flex-col gap-8 p-6">
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <DashboardComponent initial={initial as any} />
     </div>
   );

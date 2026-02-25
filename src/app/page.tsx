@@ -10,6 +10,7 @@ export default async function Page() {
 
   return (
     <main className="p-8 space-y-6">
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <DashboardComponent initial={initial as any} />
     </main>
   );

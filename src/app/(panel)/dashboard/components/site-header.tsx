@@ -48,7 +48,7 @@ export function SiteHeader() {
           className="gap-2.5 has-[>svg]:px-2"
         >
           <SidebarIcon />
-          <span className="truncate font-medium">SistemaIOT </span>
+          <span className="truncate font-medium">Milpa IOT </span>
         </Button>
         <Separator
           orientation="vertical"
@@ -88,7 +88,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           {/* <SearchForm className="w-fullsm:w-auto" /> */}
           {/* <ThemeSelector /> */}
-          {/* <ModeToggle /> */}
+          <ModeToggle />
           <NavUser />
         </div>
       </div>
