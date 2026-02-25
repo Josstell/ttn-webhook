@@ -267,11 +267,11 @@ export function DashboardComponent({ initial }: Props) {
           className="flex flex-col gap-4 @3xl/page:flex-row @3xl/page:items-center @3xl/page:justify-between"
         >
           <TabsList className="w-full @3xl/page:w-fit">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
+            <TabsTrigger value="overview">Resumen</TabsTrigger>
+            <TabsTrigger value="analytics">Analíticas</TabsTrigger>
+            <TabsTrigger value="reports">Reportes</TabsTrigger>
             <TabsTrigger value="exports">
-              Exports
+              Exportar a CSV
             </TabsTrigger>
           </TabsList>
           <div className="flex flex-col gap-2 @3xl/page:flex-row @3xl/page:items-center">
@@ -426,6 +426,26 @@ export function DashboardComponent({ initial }: Props) {
               <p className="text-muted-foreground">
                 Funcionalidad de reportesComing soon...
               </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="exports" className="flex flex-col gap-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Exportar datos</CardTitle>
+                <CardDescription>
+                  Descarga los datos de temperatura, humedad y batería en formato CSV
+                </CardDescription>
+              </div>
+              <Button onClick={handleExport} className="gap-2">
+                <DownloadIcon className="h-4 w-4" />
+                Exportar CSV
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <ProductsTable dataTempHum={data} />
             </CardContent>
           </Card>
         </TabsContent>

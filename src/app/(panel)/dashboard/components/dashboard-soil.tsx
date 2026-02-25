@@ -507,6 +507,26 @@ export function DashboardSoil({ initialSoil }: Props) {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="exports" className="flex flex-col gap-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Exportar datos</CardTitle>
+                <CardDescription>
+                  Descarga los datos de conductividad, humedad del suelo, temperatura y batería en formato CSV
+                </CardDescription>
+              </div>
+              <Button onClick={handleExport} className="gap-2">
+                <DownloadIcon className="h-4 w-4" />
+                Exportar CSV
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <TableSoil dataSoil={data} />
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
