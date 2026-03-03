@@ -6,7 +6,7 @@ type Props = object;
 
 const soilPage = async () => {
   await requireAuth();
-  const initialSoil = await caller.statsSoil({ hours: 24 });
+  const initialSoil = await caller.statsSoil({ hours: 7 * 24 });
 
   return (
     <div className="@container/page flex flex-1 flex-col gap-8 p-6">
