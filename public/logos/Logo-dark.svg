@@ -4,7 +4,7 @@
   <defs>
     <style>
       .st0 {
-        fill: gray;
+        fill: #e5e7eb;
         font-family: Roboto-Light, Roboto;
         font-size: 209.32px;
         font-weight: 300;
@@ -16,7 +16,7 @@
       }
 
       .st1, .st2 {
-        stroke: #999;
+        stroke: #d1d5db;
         stroke-miterlimit: 10;
       }
 
@@ -26,6 +26,7 @@
       }
 
       .st3 {
+        fill: #ffffff;
         font-family: Anta-Regular, Anta;
         font-size: 638.32px;
       }
@@ -35,7 +36,7 @@
       }
 
       .st5 {
-        fill: #999;
+        fill: #d1d5db;
       }
     </style>
   </defs>

@@ -2,10 +2,8 @@
 
 import { Fragment, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { SidebarIcon } from "lucide-react";
 
 // import { ThemeSelector } from "@/components/theme-selector"
-import { SearchForm } from "./search-form";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 import { ModeToggle } from "@/app/(panel)/dashboard/components/mode-toggle";
 import { NavUser } from "@/app/(panel)/dashboard/components/nav-user";
+import Image from "next/image";
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar();
@@ -47,8 +46,10 @@ export function SiteHeader() {
           onClick={toggleSidebar}
           className="gap-2.5 has-[>svg]:px-2"
         >
-          <SidebarIcon />
-          <span className="truncate font-medium">Milpa IOT </span>
+          {/* <SidebarIcon /> */}
+          <Image alt="Logo" src="/logos/Logo.svg" width={30} height={30} className="w-auto h-12 dark:hidden" priority />
+          <Image alt="Logo" src="/logos/Logo-dark.svg" width={30} height={30} className="w-auto h-12 hidden dark:block" priority />
+          <span className="truncate font-medium">MILPA </span>
         </Button>
         <Separator
           orientation="vertical"

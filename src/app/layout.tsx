@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Milpa IOT",
+  title: "Milpa | Smart Systems",
   description: "Sistema IOT para el monitoreo de temperatura, humedad, temperatura del suelo, humedad del suelo y conductividad del suelo en tiempo real.",
 };
 

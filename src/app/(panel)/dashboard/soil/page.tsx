@@ -2,8 +2,6 @@ import { requireAuth } from "@/lib/auth-utils";
 import { caller } from "@/trpc/server";
 import { DashboardSoil } from "../components/dashboard-soil";
 
-type Props = object;
-
 const soilPage = async () => {
   await requireAuth();
   const initialSoil = await caller.statsSoil({ hours: 7 * 24 });
